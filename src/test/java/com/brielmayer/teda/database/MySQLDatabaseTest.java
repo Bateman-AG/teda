@@ -1,21 +1,15 @@
 package com.brielmayer.teda.database;
 
-import com.brielmayer.teda.database.Database;
-import com.brielmayer.teda.database.MySQLDatabase;
 import com.mysql.cj.jdbc.MysqlDataSource;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class MySQLDatabaseTest {
 
     Database database;
 
-    @Before
-    public void initDatabase() throws SQLException {
+    @BeforeEach
+    public void initDatabase() {
         MysqlDataSource dataSource = new MysqlDataSource();
         dataSource.setServerName("localhost");
         dataSource.setUser("teda");

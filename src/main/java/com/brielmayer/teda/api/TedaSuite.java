@@ -2,7 +2,7 @@ package com.brielmayer.teda.api;
 
 import com.brielmayer.teda.database.Database;
 import com.brielmayer.teda.exception.TedaException;
-import com.brielmayer.teda.handler.ExecutionHandlerI;
+import com.brielmayer.teda.handler.ExecutionHandler;
 import com.brielmayer.teda.handler.LoadHandler;
 import com.brielmayer.teda.handler.TestHandler;
 import com.brielmayer.teda.handler.TruncateHandler;
@@ -18,9 +18,9 @@ import java.util.Map;
 
 public class TedaSuite {
 
-    private ExecutionHandlerI executionHandler;
+    private ExecutionHandler executionHandler;
 
-    public TedaSuite(ExecutionHandlerI executionHandler) {
+    public TedaSuite(ExecutionHandler executionHandler) {
         this.executionHandler = executionHandler;
     }
 

@@ -1,16 +1,12 @@
 package com.brielmayer.teda.database;
 
-import com.brielmayer.teda.exception.TedaException;
 import com.brielmayer.teda.model.Header;
 import com.google.common.base.Joiner;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
