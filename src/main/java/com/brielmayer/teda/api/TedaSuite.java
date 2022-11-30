@@ -9,6 +9,7 @@ import com.brielmayer.teda.handler.TruncateHandler;
 import com.brielmayer.teda.model.Bean;
 import com.brielmayer.teda.model.Cockpit;
 import com.brielmayer.teda.parser.BeanParser;
+import lombok.RequiredArgsConstructor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -16,13 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+@RequiredArgsConstructor
 public class TedaSuite {
 
-    private ExecutionHandler executionHandler;
-
-    public TedaSuite(ExecutionHandler executionHandler) {
-        this.executionHandler = executionHandler;
-    }
+    private final ExecutionHandler executionHandler;
 
     public void executeSheet(InputStream tedaSheetInputStream, Database database) {
         XSSFWorkbook workbook;
