@@ -1,6 +1,6 @@
-# [Teda - Framework](https://flywaydb.org) by [Brielmayer](https://www.brielmayer.com/)
+# Teda - Framework by [Brielmayer](https://www.brielmayer.com/)
 
-Testing Made Easy.
+Data-Driven Testing Framework.
 
 ## Supported Databases
 
