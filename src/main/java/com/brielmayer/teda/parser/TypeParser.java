@@ -2,8 +2,6 @@ package com.brielmayer.teda.parser;
 
 import com.brielmayer.teda.exception.TedaException;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -11,13 +9,8 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.regex.Pattern;
-
-import static java.time.format.DateTimeFormatter.ISO_DATE;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-import static java.time.format.DateTimeFormatter.ISO_TIME;
 
 public class TypeParser {
 
@@ -49,66 +42,66 @@ public class TypeParser {
             return "";
         }
 
-        if(value instanceof Boolean) {
+        if (value instanceof Boolean) {
             return value;
         }
 
         // java.sql.Date
-        if(value instanceof Date) {
+        if (value instanceof Date) {
             Date date = (Date) value;
             return date.toLocalDate();
         }
 
         // java.sql.Timestamp
-        if(value instanceof Timestamp) {
+        if (value instanceof Timestamp) {
             Timestamp timestamp = (Timestamp) value;
             return timestamp.toLocalDateTime();
         }
 
         // java.sql.Time
-        if(value instanceof Time) {
+        if (value instanceof Time) {
             Time time = (Time) value;
             return time.toLocalTime();
         }
 
         // java.lang.Byte
-        if(value instanceof Byte) {
+        if (value instanceof Byte) {
             return Long.valueOf((Byte) value);
         }
 
         // java.lang.Short
-        if(value instanceof Short) {
+        if (value instanceof Short) {
             return Long.valueOf((Short) value);
         }
 
         // java.lang.Integer
-        if(value instanceof Integer) {
+        if (value instanceof Integer) {
             return Long.valueOf((Integer) value);
         }
 
         // java.lang.Long
-        if(value instanceof Long) {
+        if (value instanceof Long) {
             return (Long) value;
         }
 
         // java.lang.Float
-        if(value instanceof Float) {
-            return Double.valueOf((Float)value);
+        if (value instanceof Float) {
+            return Double.valueOf(String.valueOf((Float) value));
         }
 
         // java.lang.Double
-        if(value instanceof Double) {
+        if (value instanceof Double) {
             return (Double) value;
         }
 
         // java.util.UUID
-        if(value instanceof UUID) {
+        if (value instanceof UUID) {
             UUID uuid = (UUID) value;
             return uuid.toString();
         }
 
         // from this point only try to parse strings
-        if(!(value instanceof String)) {
+        if (!(value instanceof String)) {
             throw new TedaException("Type %s not supported", value.getClass().getSimpleName());
         }
 
@@ -123,7 +116,7 @@ public class TypeParser {
         }
 
         // java.lang.double
-        if(DOUBLE_PATTERN.matcher((String) value).matches()) {
+        if (DOUBLE_PATTERN.matcher((String) value).matches()) {
             return Double.valueOf((String) value);
         }
 
@@ -131,19 +124,25 @@ public class TypeParser {
         // ISO Date without offset: '2011-12-03'
         try {
             return LocalDate.parse((String) value);
-        } catch(DateTimeException e) {};
+        } catch (DateTimeException e) {
+        }
+        ;
 
         // java.time.LocalTime
         // Time without offset: '10:15:30'
         try {
             return LocalTime.parse((String) value);
-        } catch(DateTimeException e) {};
+        } catch (DateTimeException e) {
+        }
+        ;
 
         // java.time.LocalDateTime
         //  ISO Local Date and Time: '2011-12-03T10:15:30'
         try {
             return LocalDateTime.parse((String) value);
-        } catch(DateTimeException e) {};
+        } catch (DateTimeException e) {
+        }
+        ;
 
         return value;
 

@@ -1,6 +1,8 @@
 package com.brielmayer.teda.api;
 
 import com.brielmayer.teda.database.Database;
+import com.brielmayer.teda.database.DatabaseConnection;
+import com.brielmayer.teda.database.type.DatabaseCreator;
 import com.brielmayer.teda.exception.TedaException;
 import com.brielmayer.teda.handler.ExecutionHandler;
 import com.brielmayer.teda.handler.LoadHandler;
@@ -13,28 +15,30 @@ import lombok.RequiredArgsConstructor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Properties;
 
 @RequiredArgsConstructor
 public class TedaSuite {
-
     private final ExecutionHandler executionHandler;
 
-    public void executeSheet(InputStream tedaSheetInputStream, Database database) {
+    public void executeSheet(InputStream tedaSheetInputStream) {
         XSSFWorkbook workbook;
         try {
             workbook = new XSSFWorkbook(tedaSheetInputStream);
         } catch (IOException e) {
             String error =
                     "\nUnable to open Teda sheet" +
-                    "\n%s";
+                            "\n%s";
             throw new TedaException(error, e.getMessage());
         }
+        Database database = getDatabase();
 
         Bean bean = BeanParser.parse(workbook.getSheet("Cockpit"), "#Teda");
-        for(Map<String, Object> row : bean.getData()) {
+        for (Map<String, Object> row : bean.getData()) {
             for (Map.Entry<String, Object> entry : row.entrySet()) {
 
                 // cockpit must only contain strings
@@ -63,6 +67,30 @@ public class TedaSuite {
                         break;
                 }
             }
+        }
+    }
+
+    private static Database getDatabase() {
+        try {
+            // load teda.properties file
+            Properties config = new Properties();
+            String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+            String iconConfigPath = rootPath + "teda.properties";
+            config.load(new FileInputStream(iconConfigPath));
+
+            // check valid url and read properties
+            String jdbcUrl = config.getProperty("jdbc.url");
+            if (jdbcUrl == null || jdbcUrl.isEmpty()) {
+                throw new TedaException("No jdbc url found in test teda.properties");
+            }
+            String user = config.getProperty("jdbc.user");
+            String password = config.getProperty("jdbc.password");
+
+            // create database
+            DatabaseConnection databaseConnection = new DatabaseConnection(jdbcUrl, user, password);
+            return DatabaseCreator.createDatabaseByUrlAndConfig(databaseConnection);
+        } catch (IOException e) {
+            throw new TedaException("No teda.properties file found in test directory");
         }
     }
 }

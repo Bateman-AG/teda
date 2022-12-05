@@ -1,0 +1,2 @@
+ com.brielmayer.teda.database.type.MySqlDatabaseType
+ com.brielmayer.teda.database.type.PostgresDatabaseType
