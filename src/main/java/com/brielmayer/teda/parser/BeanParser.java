@@ -3,7 +3,6 @@ package com.brielmayer.teda.parser;
 import com.brielmayer.teda.exception.ParseException;
 import com.brielmayer.teda.model.Bean;
 import com.brielmayer.teda.model.Header;
-import com.google.common.math.DoubleMath;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.CellAddress;
@@ -11,7 +10,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,10 +19,10 @@ public class BeanParser {
     public static Bean parse(XSSFSheet sheet, String beanId) {
 
         CellAddress beanAddress = findCell(beanId, sheet);
-        if(beanAddress == null) {
+        if (beanAddress == null) {
             String error =
                     "\nError while parsing Bean" +
-                    "\nUnable to find %s in %s";
+                            "\nUnable to find %s in %s";
             throw new ParseException(error, beanId, sheet.getSheetName());
         }
 
@@ -33,7 +31,7 @@ public class BeanParser {
         // get header
         List<Header> header = new ArrayList<>();
         XSSFRow columnRow = sheet.getRow(beanAddress.getRow() + 1);
-        for (byte c = 1;; c++) {
+        for (byte c = 1; ; c++) {
             XSSFCell cell = columnRow.getCell(beanAddress.getColumn() + c);
             if (cell != null && getCellValue(cell) != null) {
                 // header must be a string
@@ -48,7 +46,7 @@ public class BeanParser {
 
         // get data
         List<Map<String, Object>> data = new ArrayList<>();
-        for (int r = 2;; r++) {
+        for (int r = 2; ; r++) {
             XSSFRow xssfRow = sheet.getRow(beanAddress.getRow() + r);
             if (xssfRow == null) {
                 // end of table reached
@@ -58,14 +56,14 @@ public class BeanParser {
             Map<String, Object> row = new LinkedHashMap<>();
             for (byte c = 0; c < header.size(); c++) {
                 XSSFCell cell = xssfRow.getCell(beanAddress.getColumn() + c + 1);
-                if(cell == null) {
+                if (cell == null) {
                     row.put(header.get(c).getName(), "");
                 } else {
                     row.put(header.get(c).getName(), getCellValue(cell));
                 }
             }
 
-            if(isEmptyRow(row)) {
+            if (isEmptyRow(row)) {
                 // end of table reached
                 break;
             } else {
@@ -81,11 +79,11 @@ public class BeanParser {
                 return cell.getRichStringCellValue().getString();
             case XSSFCell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
-                // if cell is a date
+                    // if cell is a date
                     return cell.getDateCellValue();
-                } else if (DoubleMath.isMathematicalInteger(cell.getNumericCellValue())) {
+                } else if (isMathematicalInteger(cell.getNumericCellValue())) {
                     // if cell is a int / long
-                    return (long)cell.getNumericCellValue();
+                    return (long) cell.getNumericCellValue();
                 } else {
                     // else return double
                     return cell.getNumericCellValue();
@@ -98,6 +96,10 @@ public class BeanParser {
             default:
                 return "";
         }
+    }
+
+    private static boolean isMathematicalInteger(double x) {
+        return !Double.isNaN(x) && !Double.isInfinite(x) && x == Math.rint(x);
     }
 
     private static CellAddress findCell(String needle, XSSFSheet haystack) {
@@ -121,7 +123,7 @@ public class BeanParser {
     // row is empty if all values are empty
     private static boolean isEmptyRow(Map<String, Object> row) {
         for (Map.Entry<String, Object> entry : row.entrySet()) {
-            if(entry.getValue() != null && !entry.getValue().toString().equals("")) {
+            if (entry.getValue() != null && !entry.getValue().toString().equals("")) {
                 return false;
             }
         }

@@ -1,7 +1,6 @@
 package com.brielmayer.teda.database;
 
 import com.brielmayer.teda.model.Header;
-import com.google.common.base.Joiner;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -34,8 +33,7 @@ public class MySQLDatabase extends Database {
 
         // "?" * header size
         List<String> placeHolder = Collections.nCopies(row.keySet().size(), "?");
-
-        query = String.format(query, tableName, Joiner.on(",").join(row.keySet()), Joiner.on(",").join(placeHolder));
+        query = String.format(query, tableName, String.join(",", row.keySet()), String.join(",", placeHolder));
 
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -51,7 +49,7 @@ public class MySQLDatabase extends Database {
     @Override
     public List<Map<String, Object>> queryForList(String tableName, List<Header> headers) {
         String query = "SELECT %s FROM %s";
-        query = String.format(query, Joiner.on(",").join(headers.stream().map(Header::getName).collect(Collectors.toList())), tableName);
+        query = String.format(query, String.join(",", headers.stream().map(Header::getName).collect(Collectors.toList())), tableName);
         return getJdbcTemplate().queryForList(query);
     }
 }
