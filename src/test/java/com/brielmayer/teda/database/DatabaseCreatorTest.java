@@ -12,21 +12,21 @@ public class DatabaseCreatorTest {
     @Test
     public void validMySqlJdbcString_createsDatabase() {
         DatabaseConnection databaseConnection = new DatabaseConnection("jdbc:mysql://localhost:8081/", "", "");
-        Database database = DatabaseCreator.createDatabaseByUrlAndConfig(databaseConnection);
+        Database database = DatabaseCreator.createDatabase(databaseConnection);
         assertNotNull(database);
     }
 
     @Test
     public void validPostgresJdbcString_createsDatabase() {
         DatabaseConnection databaseConnection = new DatabaseConnection("jdbc:postgresql://localhost:8081/", "", "");
-        Database database = DatabaseCreator.createDatabaseByUrlAndConfig(databaseConnection);
+        Database database = DatabaseCreator.createDatabase(databaseConnection);
         assertNotNull(database);
     }
 
     @Test
     public void unknownJdbcString_throwsTeDaException() {
         DatabaseConnection databaseConnection = new DatabaseConnection("jdbc:teda://localhost:8081/", "", "");
-        assertThrows(TedaException.class, () -> DatabaseCreator.createDatabaseByUrlAndConfig(databaseConnection));
+        assertThrows(TedaException.class, () -> DatabaseCreator.createDatabase(databaseConnection));
     }
 
 }

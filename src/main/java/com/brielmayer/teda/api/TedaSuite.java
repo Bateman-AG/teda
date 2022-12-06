@@ -26,6 +26,11 @@ public class TedaSuite {
     private final ExecutionHandler executionHandler;
 
     public void executeSheet(InputStream tedaSheetInputStream) {
+        Database database = DatabaseCreator.createDatabase(getDatabaseConnection());
+        executeSheet(tedaSheetInputStream, database);
+    }
+
+    public void executeSheet(InputStream tedaSheetInputStream, Database database) {
         XSSFWorkbook workbook;
         try {
             workbook = new XSSFWorkbook(tedaSheetInputStream);
@@ -35,7 +40,6 @@ public class TedaSuite {
                             "\n%s";
             throw new TedaException(error, e.getMessage());
         }
-        Database database = getDatabase();
 
         Bean bean = BeanParser.parse(workbook.getSheet("Cockpit"), "#Teda");
         for (Map<String, Object> row : bean.getData()) {
@@ -70,7 +74,7 @@ public class TedaSuite {
         }
     }
 
-    private static Database getDatabase() {
+    private static DatabaseConnection getDatabaseConnection() {
         try {
             // load teda.properties file
             Properties config = new Properties();
@@ -87,8 +91,7 @@ public class TedaSuite {
             String password = config.getProperty("jdbc.password");
 
             // create database
-            DatabaseConnection databaseConnection = new DatabaseConnection(jdbcUrl, user, password);
-            return DatabaseCreator.createDatabaseByUrlAndConfig(databaseConnection);
+            return new DatabaseConnection(jdbcUrl, user, password);
         } catch (IOException e) {
             throw new TedaException("No teda.properties file found in test directory");
         }

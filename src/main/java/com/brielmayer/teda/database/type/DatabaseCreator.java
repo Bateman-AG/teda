@@ -8,7 +8,7 @@ import java.util.ServiceLoader;
 
 public class DatabaseCreator {
 
-    public static Database createDatabaseByUrlAndConfig(DatabaseConnection databaseConnection) throws TedaException {
+    public static Database createDatabase(DatabaseConnection databaseConnection) throws TedaException {
         ServiceLoader<DatabaseType> loader = ServiceLoader.load(DatabaseType.class);
         loader.reload();
         for (DatabaseType implClass : loader) {

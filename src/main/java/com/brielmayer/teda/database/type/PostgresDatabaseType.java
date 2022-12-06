@@ -22,7 +22,6 @@ public class PostgresDatabaseType implements DatabaseType {
         dataSource.setUrl(databaseConnection.getUrl());
         dataSource.setUser(databaseConnection.getUser());
         dataSource.setPassword(databaseConnection.getPassword());
-        dataSource.setPortNumbers(new int[databaseConnection.getPort()]);
         return new PostgresDatabase(dataSource);
     }
 

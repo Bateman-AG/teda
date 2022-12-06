@@ -20,6 +20,10 @@ public class MySqlDatabaseType implements DatabaseType {
     @Override
     public Database createDatabase(DatabaseConnection databaseConnection) {
         MysqlDataSource dataSource = new MysqlDataSource();
+        dataSource.setUrl(databaseConnection.getUrl());
+        dataSource.setUser(databaseConnection.getUser());
+        dataSource.setPassword(databaseConnection.getPassword());
+        dataSource.setPort(databaseConnection.getPort());
         return new MySQLDatabase(dataSource);
     }
 
