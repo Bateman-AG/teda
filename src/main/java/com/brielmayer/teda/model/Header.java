@@ -14,7 +14,7 @@ public class Header {
         return name;
     }
 
-    public boolean isPrimaryKey() {<
+    public boolean isPrimaryKey() {
         return primaryKey;
     }
 }
