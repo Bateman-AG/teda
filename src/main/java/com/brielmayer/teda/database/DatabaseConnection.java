@@ -1,8 +1,15 @@
 package com.brielmayer.teda.database;
 
+import com.brielmayer.teda.exception.TedaException;
+
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DatabaseConnection {
+    private static final List<String> PATTERNS = Arrays.asList(".*://(\\w*):(\\d++).*", ".*@(\\w*):(\\d++).*");
     private final String url;
     private final String user;
     private final String password;
@@ -26,6 +33,29 @@ public class DatabaseConnection {
         this.host = uri.getHost();
         this.port = uri.getPort();
         this.databaseName = uri.getPath();
+
+        if (this.host == null) {
+            for (String pattern : PATTERNS) {
+                if (parseUrlByPattern(pattern)) {
+                    break;
+                }
+            }
+        }
+        if (this.host == null) {
+            throw new TedaException("failed to parse jdbc url: %s", url);
+        }
+    }
+
+    private boolean parseUrlByPattern(String pattern) {
+        Pattern p = Pattern.compile(pattern);
+
+        Matcher matcher = p.matcher(url);
+        if (matcher.find()) {
+            host = matcher.group(1);
+            port = Integer.parseInt(matcher.group(2));
+            return true;
+        }
+        return false;
     }
 
     public String getUrl() {

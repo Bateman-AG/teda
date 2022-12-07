@@ -1,3 +1,4 @@
  com.brielmayer.teda.database.type.MySqlDatabaseType
  com.brielmayer.teda.database.type.PostgresDatabaseType
  com.brielmayer.teda.database.type.OracleDatabaseType
+ com.brielmayer.teda.database.type.SqlServerDatabaseType
