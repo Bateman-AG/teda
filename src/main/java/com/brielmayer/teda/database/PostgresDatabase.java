@@ -50,7 +50,7 @@ public class PostgresDatabase extends Database {
     @Override
     public List<Map<String, Object>> queryForList(String tableName, List<Header> headers) {
         String query = "SELECT %s FROM %s";
-        query = String.format(query, String.join(",", headers.stream().map(Header::getName).collect(Collectors.toList())), tableName);
+        query = String.format(query, headers.stream().map(Header::getName).collect(Collectors.joining(",")), tableName);
         return getJdbcTemplate().queryForList(query);
     }
 }

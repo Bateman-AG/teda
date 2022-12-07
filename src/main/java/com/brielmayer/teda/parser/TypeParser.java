@@ -2,6 +2,7 @@ package com.brielmayer.teda.parser;
 
 import com.brielmayer.teda.exception.TedaException;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -32,6 +33,7 @@ public class TypeParser {
     // ----------------------------------------------------
     // java.lang.Float      -> java.lang.Double
     // java.lang.Double     -> java.lang.Double
+    // java.math.BigDecimal -> java.lang.Long / java.lang.Double
     // ----------------------------------------------------
     // java.util.UUID       -> java.lang.String
     // ----------------------------------------------------
@@ -98,6 +100,17 @@ public class TypeParser {
         if (value instanceof UUID) {
             UUID uuid = (UUID) value;
             return uuid.toString();
+        }
+
+        // java.math.BigDecimal
+        if (value instanceof BigDecimal) {
+            BigDecimal bigDecimal = (BigDecimal) value;
+            if (bigDecimal.scale() <= 0) {
+                return bigDecimal.longValue();
+            } else {
+                return bigDecimal.doubleValue();
+            }
+
         }
 
         // from this point only try to parse strings
