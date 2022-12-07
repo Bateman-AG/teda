@@ -11,7 +11,6 @@ import com.brielmayer.teda.handler.TruncateHandler;
 import com.brielmayer.teda.model.Bean;
 import com.brielmayer.teda.model.Cockpit;
 import com.brielmayer.teda.parser.BeanParser;
-import lombok.RequiredArgsConstructor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -21,9 +20,12 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 
-@RequiredArgsConstructor
 public class TedaSuite {
     private final ExecutionHandler executionHandler;
+
+    public TedaSuite(ExecutionHandler executionHandler) {
+        this.executionHandler = executionHandler;
+    }
 
     public void executeSheet(InputStream tedaSheetInputStream) {
         Database database = DatabaseCreator.createDatabase(getDatabaseConnection());

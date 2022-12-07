@@ -1,10 +1,7 @@
 package com.brielmayer.teda.database;
 
-import lombok.Getter;
-
 import java.net.URI;
 
-@Getter
 public class DatabaseConnection {
     private final String url;
     private final String user;
@@ -29,5 +26,33 @@ public class DatabaseConnection {
         this.host = uri.getHost();
         this.port = uri.getPort();
         this.databaseName = uri.getPath();
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String getDatabaseName() {
+        return databaseName;
     }
 }
