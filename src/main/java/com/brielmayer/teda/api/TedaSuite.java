@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.Properties;
 
 public class TedaSuite {
+    private static final String INPUT_PREFIX = ".input";
+    private static final String OUTPUT_PREFIX = ".output";
+
     private final ExecutionHandler executionHandler;
 
     public TedaSuite(ExecutionHandler executionHandler) {
@@ -28,11 +31,17 @@ public class TedaSuite {
     }
 
     public void executeSheet(InputStream tedaSheetInputStream) {
-        Database database = DatabaseCreator.createDatabase(getDatabaseConnection());
-        executeSheet(tedaSheetInputStream, database);
+        Properties config = getProperties();
+        Database inputDatabase = DatabaseCreator.createDatabase(getDatabaseConnection(config, INPUT_PREFIX));
+        Database outputDatabase = DatabaseCreator.createDatabase(getDatabaseConnection(config, OUTPUT_PREFIX));
+        executeSheet(tedaSheetInputStream, inputDatabase, outputDatabase);
     }
 
     public void executeSheet(InputStream tedaSheetInputStream, Database database) {
+        executeSheet(tedaSheetInputStream, database, database);
+    }
+
+    public void executeSheet(InputStream tedaSheetInputStream, Database inputDatabase, Database outputDatabase) {
         XSSFWorkbook workbook;
         try {
             workbook = new XSSFWorkbook(tedaSheetInputStream);
@@ -58,44 +67,48 @@ public class TedaSuite {
 
                 switch (Cockpit.valueOf(header)) {
                     case TRUNCATE:
-                        TruncateHandler.truncate(database, value);
+                        TruncateHandler.truncate(outputDatabase, value);
                         break;
                     case LOAD:
                         XSSFSheet loadSheet = workbook.getSheet(value);
-                        LoadHandler.load(database, loadSheet);
+                        LoadHandler.load(inputDatabase, loadSheet);
                         break;
                     case EXECUTE:
                         executionHandler.execute(value);
                         break;
                     case TEST:
                         XSSFSheet testSheet = workbook.getSheet(value);
-                        TestHandler.test(database, testSheet);
+                        TestHandler.test(outputDatabase, testSheet);
                         break;
                 }
             }
         }
     }
 
-    private static DatabaseConnection getDatabaseConnection() {
+    private static DatabaseConnection getDatabaseConnection(Properties config, String prefix) {
+
+        // check valid url and read properties
+        String jdbcUrl = config.getProperty("jdbc" + prefix + ".url");
+        if (jdbcUrl == null || jdbcUrl.isEmpty()) {
+            throw new TedaException("No jdbc url found in test/resources/teda.properties");
+        }
+        String user = config.getProperty("jdbc" + prefix + ".user");
+        String password = config.getProperty("jdbc" + prefix + ".password");
+
+        // create database
+        return new DatabaseConnection(jdbcUrl, user, password);
+    }
+
+    private static Properties getProperties() {
         try {
             // load teda.properties file
             Properties config = new Properties();
             String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
             String iconConfigPath = rootPath + "teda.properties";
             config.load(new FileInputStream(iconConfigPath));
-
-            // check valid url and read properties
-            String jdbcUrl = config.getProperty("jdbc.url");
-            if (jdbcUrl == null || jdbcUrl.isEmpty()) {
-                throw new TedaException("No jdbc url found in test teda.properties");
-            }
-            String user = config.getProperty("jdbc.user");
-            String password = config.getProperty("jdbc.password");
-
-            // create database
-            return new DatabaseConnection(jdbcUrl, user, password);
+            return config;
         } catch (IOException e) {
-            throw new TedaException("No teda.properties file found in test directory");
+            throw new TedaException("No teda.properties file found in test/resources directory");
         }
     }
 }
