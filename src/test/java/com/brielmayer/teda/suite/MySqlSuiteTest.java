@@ -6,7 +6,6 @@ import com.brielmayer.teda.database.Database;
 import com.brielmayer.teda.database.DatabaseConnection;
 import com.brielmayer.teda.database.type.DatabaseCreator;
 import com.brielmayer.teda.handler.LoadHandlerTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -18,14 +17,15 @@ import java.io.InputStream;
 public class MySqlSuiteTest {
 
     @Container
-    public static MySQLContainer mySqlContainer = new MySQLContainer<>("mysql:8.0.31");
+    public static MySQLContainer mySqlContainer8_0_31 = new MySQLContainer<>("mysql:8.0.31");
+    @Container
+    public static MySQLContainer mySqlContainer5_7_40 = new MySQLContainer<>("mysql:5.7.40");
     Database database;
 
-    @BeforeEach
-    void setup() {
-        String jdbcUrl = mySqlContainer.getJdbcUrl();
-        String user = mySqlContainer.getUsername();
-        String password = mySqlContainer.getPassword();
+    void initializeDatabase(MySQLContainer container) {
+        String jdbcUrl = container.getJdbcUrl();
+        String user = container.getUsername();
+        String password = container.getPassword();
 
         DatabaseConnection connection = new DatabaseConnection(jdbcUrl, user, password);
         database = DatabaseCreator.createDatabase(connection);
@@ -33,7 +33,17 @@ public class MySqlSuiteTest {
     }
 
     @Test
-    void suiteTestContainer() {
+    void mySql8Test() {
+        initializeDatabase(mySqlContainer8_0_31);
+        InputStream inputStream = LoadHandlerTest.class.getClassLoader()
+                .getResourceAsStream("teda/LOAD_TEST.xlsx");
+        TedaSuite tedaSuite = new TedaSuite(new TestExecutor());
+        tedaSuite.executeSheet(inputStream, database);
+    }
+
+    @Test
+    void mySql5Test() {
+        initializeDatabase(mySqlContainer5_7_40);
         InputStream inputStream = LoadHandlerTest.class.getClassLoader()
                 .getResourceAsStream("teda/LOAD_TEST.xlsx");
         TedaSuite tedaSuite = new TedaSuite(new TestExecutor());
