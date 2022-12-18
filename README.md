@@ -4,7 +4,7 @@ Data-Driven Testing Framework.
 
 ## Supported Databases
 
-mySQL, PostgresSQL, MS SQL Server, Oracle.
+mySQL, PostgresSQL, MS SQL Server, Oracle, MariaDB.
 
 ## How to start
 
