@@ -2,3 +2,4 @@
  com.brielmayer.teda.database.type.PostgresDatabaseType
  com.brielmayer.teda.database.type.OracleDatabaseType
  com.brielmayer.teda.database.type.SqlServerDatabaseType
+ com.brielmayer.teda.database.type.MariaDatabaseType
