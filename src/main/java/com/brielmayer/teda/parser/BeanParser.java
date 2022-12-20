@@ -75,9 +75,9 @@ public class BeanParser {
 
     private static Object getCellValue(Cell cell) {
         switch (cell.getCellType()) {
-            case XSSFCell.CELL_TYPE_STRING:
+            case STRING:
                 return cell.getRichStringCellValue().getString();
-            case XSSFCell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
                     // if cell is a date
                     return cell.getDateCellValue();
@@ -88,9 +88,9 @@ public class BeanParser {
                     // else return double
                     return cell.getNumericCellValue();
                 }
-            case XSSFCell.CELL_TYPE_BOOLEAN:
+            case BOOLEAN:
                 return cell.getBooleanCellValue();
-            case XSSFCell.CELL_TYPE_FORMULA:
+            case FORMULA:
                 return cell.getCellFormula();
             // BLANK or ERROR
             default:

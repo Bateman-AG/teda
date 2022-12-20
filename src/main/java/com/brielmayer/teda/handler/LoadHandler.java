@@ -1,6 +1,6 @@
 package com.brielmayer.teda.handler;
 
-import com.brielmayer.teda.database.Database;
+import com.brielmayer.teda.database.BaseDatabase;
 import com.brielmayer.teda.exception.TedaException;
 import com.brielmayer.teda.model.Bean;
 import com.brielmayer.teda.parser.BeanParser;
@@ -13,7 +13,7 @@ public class LoadHandler {
 
     private static final String TABLE_BEAN = "#Table";
 
-    public static void load(Database database, XSSFSheet sheet) {
+    public static void load(BaseDatabase database, XSSFSheet sheet) {
         Bean beanToLoad = BeanParser.parse(sheet, TABLE_BEAN);
         int rowCount = 1;
         for (Map<String, Object> row : beanToLoad.getData()) {

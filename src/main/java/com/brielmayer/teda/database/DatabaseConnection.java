@@ -9,7 +9,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DatabaseConnection {
+
     private static final List<String> PATTERNS = Arrays.asList(".*://(\\w*):(\\d++).*", ".*@(\\w*):(\\d++).*");
+
     private final String url;
     private final String user;
     private final String password;

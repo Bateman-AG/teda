@@ -2,7 +2,7 @@ package com.brielmayer.teda.handler;
 
 import com.brielmayer.teda.comparator.ObjectComparator;
 import com.brielmayer.teda.comparator.SortComparator;
-import com.brielmayer.teda.database.Database;
+import com.brielmayer.teda.database.BaseDatabase;
 import com.brielmayer.teda.exception.TedaException;
 import com.brielmayer.teda.model.Bean;
 import com.brielmayer.teda.model.Header;
@@ -11,7 +11,6 @@ import com.brielmayer.teda.parser.TypeParser;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,13 +19,13 @@ public class TestHandler {
 
     private static final String TABLE_BEAN = "#Table";
 
-    public static void test(Database database, XSSFSheet sheet) {
+    public static void test(BaseDatabase database, XSSFSheet sheet) {
 
         Bean expectedBean = BeanParser.parse(sheet, TABLE_BEAN);
         Bean actualBean = new Bean(
                     expectedBean.getBeanName(),
                     expectedBean.getHeader(),
-                    database.queryForList(expectedBean.getBeanName(), expectedBean.getHeader())
+                    database.select(expectedBean.getBeanName(), expectedBean.getHeader())
         );
 
         // sort data

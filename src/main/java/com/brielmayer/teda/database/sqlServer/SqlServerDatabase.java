@@ -1,5 +1,6 @@
-package com.brielmayer.teda.database;
+package com.brielmayer.teda.database.sqlServer;
 
+import com.brielmayer.teda.database.BaseDatabase;
 import com.brielmayer.teda.model.Header;
 
 import javax.sql.DataSource;
@@ -11,20 +12,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class MariaDatabase extends Database {
+public class SqlServerDatabase extends BaseDatabase {
 
-    public MariaDatabase(DataSource dataSource) {
+    public SqlServerDatabase(DataSource dataSource) {
         super(dataSource);
     }
 
     @Override
     public void truncateTable(String tableName) {
-        executeQuery("TRUNCATE TABLE `%s`;", tableName);
+        executeQuery("TRUNCATE TABLE %s;", tableName);
     }
 
     @Override
     public void dropTable(String tableName) {
-        executeQuery("DROP TABLE IF EXISTS `%s`;", tableName);
+        executeQuery("DROP TABLE IF EXISTS %s;", tableName);
     }
 
     @Override
@@ -47,9 +48,9 @@ public class MariaDatabase extends Database {
     }
 
     @Override
-    public List<Map<String, Object>> queryForList(String tableName, List<Header> headers) {
+    public List<Map<String, Object>> select(String tableName, List<Header> headers) {
         String query = "SELECT %s FROM %s";
         query = String.format(query, headers.stream().map(Header::getName).collect(Collectors.joining(",")), tableName);
-        return getJdbcTemplate().queryForList(query);
+        return queryForList(query);
     }
 }

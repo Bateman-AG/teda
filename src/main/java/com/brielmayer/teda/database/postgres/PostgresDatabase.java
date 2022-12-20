@@ -1,5 +1,6 @@
-package com.brielmayer.teda.database;
+package com.brielmayer.teda.database.postgres;
 
+import com.brielmayer.teda.database.BaseDatabase;
 import com.brielmayer.teda.model.Header;
 
 import javax.sql.DataSource;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class PostgresDatabase extends Database {
+public class PostgresDatabase extends BaseDatabase {
 
     public PostgresDatabase(DataSource dataSource) {
         super(dataSource);
@@ -48,10 +49,10 @@ public class PostgresDatabase extends Database {
     }
 
     @Override
-    public List<Map<String, Object>> queryForList(String tableName, List<Header> headers) {
+    public List<Map<String, Object>> select(String tableName, List<Header> headers) {
         String query = "SELECT %s FROM %s";
         query = String.format(query, headers.stream().map(Header::getName).collect(Collectors.joining(",")), tableName);
-        return getJdbcTemplate().queryForList(query);
+        return queryForList(query);
     }
 }
 

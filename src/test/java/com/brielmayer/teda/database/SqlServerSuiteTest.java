@@ -1,11 +1,11 @@
-package com.brielmayer.teda.suite;
+package com.brielmayer.teda.database;
 
-import com.brielmayer.teda.TestExecutor;
-import com.brielmayer.teda.api.TedaSuite;
-import com.brielmayer.teda.database.Database;
-import com.brielmayer.teda.database.DatabaseConnection;
-import com.brielmayer.teda.database.type.DatabaseCreator;
+import com.brielmayer.teda.LogExecutionHandler;
+import com.brielmayer.teda.TedaSuite;
+import com.brielmayer.teda.database.BaseDatabase;
+import com.brielmayer.teda.database.DatabaseFactory;
 import com.brielmayer.teda.handler.LoadHandlerTest;
+import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.MSSQLServerContainer;
@@ -18,9 +18,10 @@ import java.io.InputStream;
 public class SqlServerSuiteTest {
 
     @Container
-    public static MSSQLServerContainer mySqlContainer = new MSSQLServerContainer<>("mcr.microsoft.com/mssql/server:2017-CU12")
+    public static MSSQLServerContainer<?> mySqlContainer = new MSSQLServerContainer<>("mcr.microsoft.com/mssql/server:2017-CU12")
             .acceptLicense();
-    Database database;
+
+    private BaseDatabase database;
 
     @BeforeEach
     void setup() {
@@ -28,8 +29,11 @@ public class SqlServerSuiteTest {
         String user = mySqlContainer.getUsername();
         String password = mySqlContainer.getPassword();
 
-        DatabaseConnection connection = new DatabaseConnection(jdbcUrl, user, password);
-        database = DatabaseCreator.createDatabase(connection);
+        SQLServerDataSource db = new SQLServerDataSource();
+        db.setPassword(password);
+        db.setURL(jdbcUrl);
+        db.setUser(user);
+        database = DatabaseFactory.createDatabase(db);
         database.executeQuery("CREATE TABLE STUDENT (id int, name varchar(255), age int, average decimal(18,9))");
     }
 
@@ -37,7 +41,7 @@ public class SqlServerSuiteTest {
     void suiteTestContainer() {
         InputStream inputStream = LoadHandlerTest.class.getClassLoader()
                 .getResourceAsStream("teda/LOAD_TEST.xlsx");
-        TedaSuite tedaSuite = new TedaSuite(new TestExecutor());
-        tedaSuite.executeSheet(inputStream, database);
+        TedaSuite tedaSuite = new TedaSuite(database.getDataSource(), (new LogExecutionHandler()));
+        tedaSuite.executeSheet(inputStream);
     }
 }

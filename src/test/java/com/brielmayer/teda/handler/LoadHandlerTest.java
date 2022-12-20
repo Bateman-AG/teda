@@ -1,6 +1,6 @@
 package com.brielmayer.teda.handler;
 
-import com.brielmayer.teda.database.Database;
+import com.brielmayer.teda.database.BaseDatabase;
 import com.brielmayer.teda.exception.TedaException;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -23,7 +23,7 @@ public class LoadHandlerTest {
     @Test
     public void loadHandler_validData_success() throws SQLException {
         //Mocks
-        Database database = Mockito.mock(Database.class);
+        BaseDatabase database = Mockito.mock(BaseDatabase.class);
         doNothing().when(database).insertRow(any(), any());
 
         // Testdata
@@ -39,7 +39,7 @@ public class LoadHandlerTest {
     @Test
     public void loadHandler_sqlException_throwsTeDaException() throws SQLException {
         //Mocks
-        Database database = Mockito.mock(Database.class);
+        BaseDatabase database = Mockito.mock(BaseDatabase.class);
         doThrow(SQLException.class)
                 .when(database)
                 .insertRow(any(), any());
