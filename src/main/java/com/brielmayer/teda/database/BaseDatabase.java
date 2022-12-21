@@ -1,5 +1,6 @@
 package com.brielmayer.teda.database;
 
+import com.brielmayer.teda.map.LinkedCaseInsensitiveMap;
 import com.brielmayer.teda.model.Header;
 
 import javax.sql.DataSource;
@@ -8,7 +9,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,8 +21,8 @@ public abstract class BaseDatabase {
             int columnCount = resultSetMetaData.getColumnCount();
             Map<String, Object> mapOfColValues = createColumnMap(columnCount);
 
-            for(int i = 1; i <= columnCount; ++i) {
-                String key = getColumnKey(resultSetMetaData, i).toUpperCase();
+            for (int i = 1; i <= columnCount; ++i) {
+                String key = getColumnKey(resultSetMetaData, i);
                 Object obj = getColumnValue(resultSet, i);
                 mapOfColValues.put(key, obj);
             }
@@ -31,7 +31,7 @@ public abstract class BaseDatabase {
         }
 
         protected static Map<String, Object> createColumnMap(int columnCount) {
-            return new LinkedHashMap<>(columnCount);
+            return new LinkedCaseInsensitiveMap<>(columnCount);
         }
 
         protected static String getColumnKey(ResultSetMetaData resultSetMetaData, int index) throws SQLException {
@@ -55,7 +55,7 @@ public abstract class BaseDatabase {
     }
 
     protected int executeQuery(String query) {
-        try(Statement statement = dataSource.getConnection().createStatement()) {
+        try (Statement statement = dataSource.getConnection().createStatement()) {
             return statement.executeUpdate(query);
         } catch (SQLException e) {
             throw new RuntimeException(e); // TODO better exception handling
@@ -68,7 +68,7 @@ public abstract class BaseDatabase {
 
     protected List<Map<String, Object>> queryForList(String query) {
         List<Map<String, Object>> result = new ArrayList<>();
-        try(Statement statement = dataSource.getConnection().createStatement()) {
+        try (Statement statement = dataSource.getConnection().createStatement()) {
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
                 result.add(ResultSetMapper.mapResultSet(resultSet));

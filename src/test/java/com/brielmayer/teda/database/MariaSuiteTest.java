@@ -2,8 +2,6 @@ package com.brielmayer.teda.database;
 
 import com.brielmayer.teda.LogExecutionHandler;
 import com.brielmayer.teda.TedaSuite;
-import com.brielmayer.teda.database.BaseDatabase;
-import com.brielmayer.teda.database.DatabaseFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mariadb.jdbc.MariaDbDataSource;
@@ -24,11 +22,11 @@ public class MariaSuiteTest {
     @BeforeEach
     void initializeDatabase() {
         try {
-            MariaDbDataSource db = new MariaDbDataSource(mariaDbContainer.getJdbcUrl());
-            db.setUser(mariaDbContainer.getUsername());
-            db.setPassword(mariaDbContainer.getPassword());
+            MariaDbDataSource dataSource = new MariaDbDataSource(mariaDbContainer.getJdbcUrl());
+            dataSource.setUser(mariaDbContainer.getUsername());
+            dataSource.setPassword(mariaDbContainer.getPassword());
 
-            database = DatabaseFactory.createDatabase(db);
+            database = DatabaseFactory.createDatabase(dataSource);
             database.executeQuery("CREATE TABLE STUDENT (id int, name varchar(255), age int, average double)");
         } catch (SQLException e) {
             throw new RuntimeException(e);
