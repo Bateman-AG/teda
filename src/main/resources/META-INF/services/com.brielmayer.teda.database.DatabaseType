@@ -3,3 +3,4 @@
  com.brielmayer.teda.database.oracle.OracleDatabaseType
  com.brielmayer.teda.database.sqlServer.SqlServerDatabaseType
  com.brielmayer.teda.database.mariaDb.MariaDbDatabaseType
+ com.brielmayer.teda.database.h2.H2DatabaseType
