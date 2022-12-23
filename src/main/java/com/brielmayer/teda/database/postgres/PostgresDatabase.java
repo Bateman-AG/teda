@@ -4,8 +4,6 @@ import com.brielmayer.teda.database.BaseDatabase;
 import com.brielmayer.teda.model.Header;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
@@ -37,15 +35,7 @@ public class PostgresDatabase extends BaseDatabase {
 
         query = String.format(query, tableName, String.join(",", row.keySet()), String.join(",", placeHolder));
 
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                int parameterIndex = 1;
-                for (Map.Entry<String, Object> entry : row.entrySet()) {
-                    preparedStatement.setObject(parameterIndex++, entry.getValue());
-                }
-                preparedStatement.executeUpdate();
-            }
-        }
+        executeRow(query, row);
     }
 
     @Override
