@@ -23,5 +23,4 @@ public class DatabaseFactoryTest {
         final BaseDatabase database = DatabaseFactory.createDatabase(dataSource);
         assertTrue(database instanceof PostgresDatabase);
     }
-
 }

@@ -1,5 +1,4 @@
-package com.brielmayer.teda.map;
-
+package com.brielmayer.teda.util;
 
 import java.util.HashMap;
 import java.util.Iterator;

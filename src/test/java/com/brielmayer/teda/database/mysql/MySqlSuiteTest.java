@@ -1,7 +1,10 @@
-package com.brielmayer.teda.database;
+package com.brielmayer.teda.database.mysql;
 
 import com.brielmayer.teda.LogExecutionHandler;
 import com.brielmayer.teda.TedaSuite;
+import com.brielmayer.teda.database.BaseDatabase;
+import com.brielmayer.teda.database.DatabaseFactory;
+import com.brielmayer.teda.util.ResourceReader;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.MySQLContainer;
@@ -20,25 +23,28 @@ public class MySqlSuiteTest {
     private BaseDatabase database;
 
     void initializeDatabase(MySQLContainer<?> container) {
+        // Setup MySQL database
         MysqlDataSource dataSource = new MysqlDataSource();
         dataSource.setUrl(container.getJdbcUrl());
         dataSource.setUser(container.getUsername());
         dataSource.setPassword(container.getPassword());
+
+        // Create and initialize database
         database = DatabaseFactory.createDatabase(dataSource);
-        database.executeQuery("CREATE TABLE STUDENT (id int, name varchar(255), age int, average double)");
+        database.executeQuery(ResourceReader.getResourceAsString("database/mysql/CREATE_TEST_TABLE.sql"));
     }
 
     @Test
-    void mySql8Test() {
-        initializeDatabase(mySqlContainer8_0_31);
-        new TedaSuite(database.getDataSource(), new LogExecutionHandler())
-                .executeSheet("src/test/resources/teda/LOAD_TEST.xlsx");
-    }
-
-    @Test
-    void mySql5Test() {
+    void loadTestMySql5() {
         initializeDatabase(mySqlContainer5_7_40);
         new TedaSuite(database.getDataSource(), new LogExecutionHandler())
-                .executeSheet("src/test/resources/teda/LOAD_TEST.xlsx");
+                .executeSheet(ResourceReader.getResourceAsInputStream("teda/LOAD_TEST.xlsx"));
+    }
+
+    @Test
+    void loadTestMySql8() {
+        initializeDatabase(mySqlContainer8_0_31);
+        new TedaSuite(database.getDataSource(), new LogExecutionHandler())
+                .executeSheet(ResourceReader.getResourceAsInputStream("teda/LOAD_TEST.xlsx"));
     }
 }

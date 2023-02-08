@@ -1,6 +1,6 @@
 package com.brielmayer.teda.database;
 
-import com.brielmayer.teda.map.LinkedCaseInsensitiveMap;
+import com.brielmayer.teda.util.LinkedCaseInsensitiveMap;
 import com.brielmayer.teda.model.Header;
 
 import javax.sql.DataSource;
@@ -56,7 +56,7 @@ public abstract class BaseDatabase {
         this.dataSource = dataSource;
     }
 
-    protected int executeQuery(final String query) {
+    public int executeQuery(final String query) {
         try (final Statement statement = dataSource.getConnection().createStatement()) {
             return statement.executeUpdate(query);
         } catch (final SQLException e) {
@@ -64,11 +64,11 @@ public abstract class BaseDatabase {
         }
     }
 
-    protected int executeQuery(final String query, final String... params) {
+    public int executeQuery(final String query, final String... params) {
         return executeQuery(String.format(query, params));
     }
 
-    protected List<Map<String, Object>> queryForList(final String query) {
+    public List<Map<String, Object>> queryForList(final String query) {
         final List<Map<String, Object>> result = new ArrayList<>();
         try (final Statement statement = dataSource.getConnection().createStatement()) {
             final ResultSet resultSet = statement.executeQuery(query);

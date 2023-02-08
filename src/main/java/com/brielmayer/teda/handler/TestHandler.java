@@ -9,13 +9,16 @@ import com.brielmayer.teda.model.Header;
 import com.brielmayer.teda.parser.BeanParser;
 import com.brielmayer.teda.parser.TypeParser;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public final class TestHandler {
+
+    private static final Logger log  = LoggerFactory.getLogger(TestHandler.class);
 
     private static final String TABLE_BEAN = "#Table";
 
@@ -27,6 +30,8 @@ public final class TestHandler {
                 expectedBean.getHeader(),
                 database.select(expectedBean.getBeanName(), expectedBean.getHeader())
         );
+
+        log.info("Test table: {}", expectedBean.getBeanName());
 
         // sort data
         final List<Header> primaryKeys = expectedBean.getHeader().stream().filter(Header::isPrimaryKey).collect(Collectors.toList());

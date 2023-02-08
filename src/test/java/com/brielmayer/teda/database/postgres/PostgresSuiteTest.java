@@ -1,7 +1,10 @@
-package com.brielmayer.teda.database;
+package com.brielmayer.teda.database.postgres;
 
 import com.brielmayer.teda.LogExecutionHandler;
 import com.brielmayer.teda.TedaSuite;
+import com.brielmayer.teda.database.BaseDatabase;
+import com.brielmayer.teda.database.DatabaseFactory;
+import com.brielmayer.teda.util.ResourceReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -19,17 +22,20 @@ public class PostgresSuiteTest {
 
     @BeforeEach
     void setup() {
+        // Setup PostgreSQL database
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         dataSource.setURL(postgreSQLContainer.getJdbcUrl());
         dataSource.setUser(postgreSQLContainer.getUsername());
         dataSource.setPassword(postgreSQLContainer.getPassword());
+
+        // Create and initialize database
         database = DatabaseFactory.createDatabase(dataSource);
-        database.executeQuery("CREATE TABLE STUDENT (id text, name text, age int4, average float8)");
+        database.executeQuery(ResourceReader.getResourceAsString("database/postgres/CREATE_TEST_TABLE.sql"));
     }
 
     @Test
-    void suiteTestContainer() {
+    void loadTest() {
         new TedaSuite(database.getDataSource(), new LogExecutionHandler())
-                .executeSheet("src/test/resources/teda/LOAD_TEST.xlsx");
+                .executeSheet(ResourceReader.getResourceAsInputStream("teda/LOAD_TEST.xlsx"));
     }
 }
