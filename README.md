@@ -1,4 +1,6 @@
-# Teda - Framework by [Brielmayer](https://www.brielmayer.com/)
+# Teda Framework - Data-Driven Testing Framework based on Excel, OpenOffice, etc...
+
+![Maven Workflow](https://github.com/brielmayer/teda/actions/workflows/maven.yml/badge.svg)
 
 Data-Driven Testing Framework.
 
