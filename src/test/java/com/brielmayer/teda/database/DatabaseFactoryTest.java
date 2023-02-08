@@ -12,15 +12,15 @@ public class DatabaseFactoryTest {
 
     @Test
     public void mySqlDataSource_createsDatabase() {
-        MysqlDataSource dataSource = new MysqlDataSource();
-        BaseDatabase database = DatabaseFactory.createDatabase(dataSource);
+        final MysqlDataSource dataSource = new MysqlDataSource();
+        final BaseDatabase database = DatabaseFactory.createDatabase(dataSource);
         assertTrue(database instanceof MySqlDatabase);
     }
 
     @Test
     public void postgresDataSource_createsDatabase() {
-        PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        BaseDatabase database = DatabaseFactory.createDatabase(dataSource);
+        final PGSimpleDataSource dataSource = new PGSimpleDataSource();
+        final BaseDatabase database = DatabaseFactory.createDatabase(dataSource);
         assertTrue(database instanceof PostgresDatabase);
     }
 

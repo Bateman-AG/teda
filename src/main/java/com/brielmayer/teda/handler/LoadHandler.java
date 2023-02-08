@@ -22,7 +22,7 @@ public final class LoadHandler {
             } catch (final SQLException e) {
                 throw TedaException.builder()
                         .appendMessage("Failed to insert data into %s", beanToLoad.getBeanName())
-                        .appendMessage("Row %d contains an error: %s", rowCount)
+                        .appendMessage("Row %d contains an error", rowCount)
                         .cause(e)
                         .build();
             }
