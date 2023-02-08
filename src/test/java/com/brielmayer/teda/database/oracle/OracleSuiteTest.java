@@ -19,9 +19,9 @@ public class OracleSuiteTest {
 
     @Container
     public static OracleContainer oracleContainer = new OracleContainer("gvenzl/oracle-xe:21-slim-faststart")
-            .withDatabaseName("test")
-            .withUsername("user")
-            .withPassword("password");
+            .withDatabaseName("testDB")
+            .withUsername("testUser")
+            .withPassword("testPassword");
 
     private BaseDatabase database;
 
