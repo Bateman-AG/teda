@@ -16,27 +16,27 @@ import java.util.Map;
 
 public abstract class BaseDatabase {
 
-    static class ResultSetMapper {
+    static final class ResultSetMapper {
 
-        public static Map<String, Object> mapResultSet(ResultSet resultSet) throws SQLException {
-            ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-            int columnCount = resultSetMetaData.getColumnCount();
-            Map<String, Object> mapOfColValues = createColumnMap(columnCount);
+        public static Map<String, Object> mapResultSet(final ResultSet resultSet) throws SQLException {
+            final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+            final int columnCount = resultSetMetaData.getColumnCount();
+            final Map<String, Object> mapOfColValues = createColumnMap(columnCount);
 
             for (int i = 1; i <= columnCount; ++i) {
-                String key = getColumnKey(resultSetMetaData, i);
-                Object obj = getColumnValue(resultSet, i);
+                final String key = getColumnKey(resultSetMetaData, i);
+                final Object obj = getColumnValue(resultSet, i);
                 mapOfColValues.put(key, obj);
             }
 
             return mapOfColValues;
         }
 
-        protected static Map<String, Object> createColumnMap(int columnCount) {
+        private static Map<String, Object> createColumnMap(final int columnCount) {
             return new LinkedCaseInsensitiveMap<>(columnCount);
         }
 
-        protected static String getColumnKey(ResultSetMetaData resultSetMetaData, int index) throws SQLException {
+        private static String getColumnKey(final ResultSetMetaData resultSetMetaData, final int index) throws SQLException {
             String name = resultSetMetaData.getColumnLabel(index);
             if (name == null || name.length() < 1) {
                 name = resultSetMetaData.getColumnName(index);
@@ -45,48 +45,49 @@ public abstract class BaseDatabase {
             return name;
         }
 
-        protected static Object getColumnValue(ResultSet rs, int index) throws SQLException {
+        private static Object getColumnValue(final ResultSet rs, final int index) throws SQLException {
             return rs.getObject(index);
         }
     }
 
     protected DataSource dataSource;
 
-    public BaseDatabase(DataSource dataSource) {
+    public BaseDatabase(final DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
-    protected int executeQuery(String query) {
-        try (Statement statement = dataSource.getConnection().createStatement()) {
+    protected int executeQuery(final String query) {
+        try (final Statement statement = dataSource.getConnection().createStatement()) {
             return statement.executeUpdate(query);
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             throw new RuntimeException(e); // TODO better exception handling
         }
     }
 
-    protected int executeQuery(String query, String... params) {
+    protected int executeQuery(final String query, final String... params) {
         return executeQuery(String.format(query, params));
     }
 
-    protected List<Map<String, Object>> queryForList(String query) {
-        List<Map<String, Object>> result = new ArrayList<>();
-        try (Statement statement = dataSource.getConnection().createStatement()) {
-            ResultSet resultSet = statement.executeQuery(query);
+    protected List<Map<String, Object>> queryForList(final String query) {
+        final List<Map<String, Object>> result = new ArrayList<>();
+        try (final Statement statement = dataSource.getConnection().createStatement()) {
+            final ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
                 result.add(ResultSetMapper.mapResultSet(resultSet));
             }
             return result;
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             throw new RuntimeException(e); // TODO better exception handling
         }
     }
 
-    protected void executeRow(String query, Map<String, Object> row) throws SQLException {
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+    protected void executeRow(final String query, final Map<String, Object> row) throws SQLException {
+        try (final Connection connection = dataSource.getConnection()) {
+            try (final PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 int parameterIndex = 1;
-                for (Map.Entry<String, Object> entry : row.entrySet()) {
-                    preparedStatement.setObject(parameterIndex++, entry.getValue());
+                for (final Map.Entry<String, Object> entry : row.entrySet()) {
+                    preparedStatement.setObject(parameterIndex, entry.getValue());
+                    parameterIndex++;
                 }
                 preparedStatement.executeUpdate();
             }

@@ -1,8 +1,7 @@
-package com.brielmayer.teda.database.sqlServer;
+package com.brielmayer.teda.database.sqlserver;
 
 import com.brielmayer.teda.database.BaseDatabase;
 import com.brielmayer.teda.database.DatabaseType;
-import com.brielmayer.teda.database.sqlServer.SqlServerDatabase;
 
 import javax.sql.DataSource;
 import java.util.Collections;

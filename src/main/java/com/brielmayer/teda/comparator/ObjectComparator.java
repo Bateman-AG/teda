@@ -6,28 +6,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public class ObjectComparator {
+public final class ObjectComparator {
 
-    private static ObjectComparator instance;
-
-    private ObjectComparator() {
-    }
-
-    public static ObjectComparator getInstance() {
-        if (instance == null) {
-            instance = new ObjectComparator();
-        }
-        return instance;
-    }
-
-    public boolean compare(Object o1, Object o2) {
+    public static boolean compare(final Object o1, final Object o2) {
 
         if (!o1.getClass().getSimpleName().equals(o2.getClass().getSimpleName())) {
-            throw new TedaException("Types are not equal %s and %s with o1 value %s", o1.getClass().getSimpleName(), o2.getClass().getSimpleName(), o1.toString());
+            throw TedaException.builder()
+                    .appendMessage("Types are not equal %s and %s with o1 value %s", o1.getClass().getSimpleName(), o2.getClass().getSimpleName(), o1.toString())
+                    .build();
         }
 
         if (o1 instanceof String) {
-            return ((String) o1).equals((String) o2);
+            return o1.equals(o2);
         }
 
         if (o1 instanceof Boolean) {
@@ -36,17 +26,17 @@ public class ObjectComparator {
 
         // java.sql.Date
         if (o1 instanceof LocalDate) {
-            return ((LocalDate) o1).compareTo((LocalDate) o2) == 0;
+            return ((LocalDate) o1).isEqual((LocalDate) o2);
         }
 
         // java.sql.Timestamp
         if (o1 instanceof LocalDateTime) {
-            return ((LocalDateTime) o1).compareTo((LocalDateTime) o2) == 0;
+            return ((LocalDateTime) o1).isEqual((LocalDateTime) o2);
         }
 
         // java.sql.Time
         if (o1 instanceof LocalTime) {
-            return ((LocalTime) o1).compareTo((LocalTime) o2) == 0;
+            return o1.equals(o2);
         }
 
         // java.lang.Long
@@ -64,6 +54,8 @@ public class ObjectComparator {
             return ((double) o1) == ((double) o2);
         }
 
-        throw new TedaException("Type %s not allowed", o1.getClass().getSimpleName());
+        throw TedaException.builder()
+                .appendMessage("Type %s not allowed", o1.getClass().getSimpleName())
+                .build();
     }
 }

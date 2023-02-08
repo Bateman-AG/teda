@@ -1,6 +1,5 @@
 package com.brielmayer.teda.database;
 
-import com.brielmayer.teda.LogExecutionHandler;
 import com.brielmayer.teda.TedaSuite;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +11,7 @@ public class H2SuiteTest {
 
     @BeforeEach
     void setup() {
-        JdbcDataSource dataSource = new JdbcDataSource();
+        final JdbcDataSource dataSource = new JdbcDataSource();
         dataSource.setURL("jdbc:h2:~/test");
         dataSource.setUser("sa");
         dataSource.setPassword("");
@@ -22,7 +21,7 @@ public class H2SuiteTest {
 
     @Test
     void suiteTestContainer() {
-        new TedaSuite(database.getDataSource(), new LogExecutionHandler())
+        new TedaSuite(database.getDataSource())
                 .executeSheet("src/test/resources/teda/LOAD_TEST.xlsx");
     }
 }

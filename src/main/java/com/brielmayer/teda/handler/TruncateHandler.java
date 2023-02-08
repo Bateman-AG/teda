@@ -2,8 +2,9 @@ package com.brielmayer.teda.handler;
 
 import com.brielmayer.teda.database.BaseDatabase;
 
-public class TruncateHandler {
-    public static void truncate(BaseDatabase database, String tableName) {
+public final class TruncateHandler {
+
+    public static void truncate(final BaseDatabase database, final String tableName) {
         database.truncateTable(tableName);
     }
 }

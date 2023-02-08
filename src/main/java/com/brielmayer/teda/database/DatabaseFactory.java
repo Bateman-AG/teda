@@ -5,17 +5,19 @@ import com.brielmayer.teda.exception.TedaException;
 import javax.sql.DataSource;
 import java.util.ServiceLoader;
 
-public class DatabaseFactory {
+public final class DatabaseFactory {
 
-    public static BaseDatabase createDatabase(DataSource dataSource) throws TedaException {
-        ServiceLoader<DatabaseType> loader = ServiceLoader.load(DatabaseType.class);
+    public static BaseDatabase createDatabase(final DataSource dataSource) throws TedaException {
+        final ServiceLoader<DatabaseType> loader = ServiceLoader.load(DatabaseType.class);
         loader.reload();
-        for (DatabaseType implClass : loader) {
+        for (final DatabaseType implClass : loader) {
             if (implClass.handlesDataSource(dataSource)) {
                 return implClass.createDatabase(dataSource);
             }
         }
 
-        throw new TedaException("No supported database type found");
+        throw TedaException.builder()
+                .appendMessage("No supported database type found")
+                .build();
     }
 }

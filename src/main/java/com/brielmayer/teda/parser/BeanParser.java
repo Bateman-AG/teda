@@ -1,6 +1,6 @@
 package com.brielmayer.teda.parser;
 
-import com.brielmayer.teda.exception.ParseException;
+import com.brielmayer.teda.exception.TedaException;
 import com.brielmayer.teda.model.Bean;
 import com.brielmayer.teda.model.Header;
 import org.apache.poi.ss.usermodel.Cell;
@@ -15,27 +15,29 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BeanParser {
-    public static Bean parse(XSSFSheet sheet, String beanId) {
+public enum BeanParser {
+    ;
 
-        CellAddress beanAddress = findCell(beanId, sheet);
+    public static Bean parse(final XSSFSheet sheet, final String beanId) {
+
+        final CellAddress beanAddress = findCell(beanId, sheet);
         if (beanAddress == null) {
-            String error =
-                    "\nError while parsing Bean" +
-                            "\nUnable to find %s in %s";
-            throw new ParseException(error, beanId, sheet.getSheetName());
+            throw TedaException.builder()
+                    .appendMessage("Error while parsing Bean")
+                    .appendMessage("Unable to find %s in %s", beanId, sheet.getSheetName())
+                    .build();
         }
 
-        String beanName = sheet.getRow(beanAddress.getRow()).getCell(beanAddress.getColumn() + 1).getStringCellValue();
+        final String beanName = sheet.getRow(beanAddress.getRow()).getCell(beanAddress.getColumn() + 1).getStringCellValue();
 
         // get header
-        List<Header> header = new ArrayList<>();
-        XSSFRow columnRow = sheet.getRow(beanAddress.getRow() + 1);
+        final List<Header> header = new ArrayList<>();
+        final XSSFRow columnRow = sheet.getRow(beanAddress.getRow() + 1);
         for (byte c = 1; ; c++) {
-            XSSFCell cell = columnRow.getCell(beanAddress.getColumn() + c);
+            final XSSFCell cell = columnRow.getCell(beanAddress.getColumn() + c);
             if (cell != null && getCellValue(cell) != null) {
                 // header must be a string
-                String value = (String) getCellValue(cell);
+                final String value = (String) getCellValue(cell);
                 // primary keys start with a hash tag
                 header.add(new Header(value.replace("#", ""), value.startsWith("#")));
                 continue;
@@ -45,17 +47,17 @@ public class BeanParser {
         }
 
         // get data
-        List<Map<String, Object>> data = new ArrayList<>();
+        final List<Map<String, Object>> data = new ArrayList<>();
         for (int r = 2; ; r++) {
-            XSSFRow xssfRow = sheet.getRow(beanAddress.getRow() + r);
+            final XSSFRow xssfRow = sheet.getRow(beanAddress.getRow() + r);
             if (xssfRow == null) {
                 // end of table reached
                 break;
             }
 
-            Map<String, Object> row = new LinkedHashMap<>();
+            final Map<String, Object> row = new LinkedHashMap<>();
             for (byte c = 0; c < header.size(); c++) {
-                XSSFCell cell = xssfRow.getCell(beanAddress.getColumn() + c + 1);
+                final XSSFCell cell = xssfRow.getCell(beanAddress.getColumn() + c + 1);
                 if (cell == null) {
                     row.put(header.get(c).getName(), "");
                 } else {
@@ -73,7 +75,7 @@ public class BeanParser {
         return new Bean(beanName, header, data);
     }
 
-    private static Object getCellValue(Cell cell) {
+    private static Object getCellValue(final Cell cell) {
         switch (cell.getCellType()) {
             case STRING:
                 return cell.getRichStringCellValue().getString();
@@ -98,18 +100,18 @@ public class BeanParser {
         }
     }
 
-    private static boolean isMathematicalInteger(double x) {
+    private static boolean isMathematicalInteger(final double x) {
         return !Double.isNaN(x) && !Double.isInfinite(x) && x == Math.rint(x);
     }
 
-    private static CellAddress findCell(String needle, XSSFSheet haystack) {
+    private static CellAddress findCell(final String needle, final XSSFSheet haystack) {
         // only search first 100 rows
         for (int r = 0; r < 100; r++) {
-            XSSFRow row = haystack.getRow(r);
+            final XSSFRow row = haystack.getRow(r);
             if (row != null) {
                 // only search first 100 columns
                 for (int c = 0; c < 100; c++) {
-                    XSSFCell cell = row.getCell(c);
+                    final XSSFCell cell = row.getCell(c);
 
                     if (cell != null && getCellValue(cell).equals(needle)) {
                         return cell.getAddress();
@@ -121,8 +123,8 @@ public class BeanParser {
     }
 
     // row is empty if all values are empty
-    private static boolean isEmptyRow(Map<String, Object> row) {
-        for (Map.Entry<String, Object> entry : row.entrySet()) {
+    private static boolean isEmptyRow(final Map<String, Object> row) {
+        for (final Map.Entry<String, Object> entry : row.entrySet()) {
             if (entry.getValue() != null && !entry.getValue().toString().equals("")) {
                 return false;
             }

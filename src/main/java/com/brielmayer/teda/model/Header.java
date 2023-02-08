@@ -5,7 +5,7 @@ public class Header {
     private final String name;
     private final boolean primaryKey;
 
-    public Header(String name, boolean primaryKey) {
+    public Header(final String name, final boolean primaryKey) {
         this.name = name;
         this.primaryKey = primaryKey;
     }

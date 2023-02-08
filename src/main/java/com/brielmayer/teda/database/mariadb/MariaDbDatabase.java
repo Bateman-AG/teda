@@ -1,4 +1,4 @@
-package com.brielmayer.teda.database.mariaDb;
+package com.brielmayer.teda.database.mariadb;
 
 import com.brielmayer.teda.database.BaseDatabase;
 import com.brielmayer.teda.model.Header;

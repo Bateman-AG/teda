@@ -9,21 +9,22 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import java.sql.SQLException;
 import java.util.Map;
 
-public class LoadHandler {
+public final class LoadHandler {
 
     private static final String TABLE_BEAN = "#Table";
 
-    public static void load(BaseDatabase database, XSSFSheet sheet) {
-        Bean beanToLoad = BeanParser.parse(sheet, TABLE_BEAN);
+    public static void load(final BaseDatabase database, final XSSFSheet sheet) {
+        final Bean beanToLoad = BeanParser.parse(sheet, TABLE_BEAN);
         int rowCount = 1;
-        for (Map<String, Object> row : beanToLoad.getData()) {
+        for (final Map<String, Object> row : beanToLoad.getData()) {
             try {
                 database.insertRow(beanToLoad.getBeanName(), row);
-            } catch (SQLException e) {
-                String error =
-                        "\nFailed to insert data into %s" +
-                        "\nRow %d contains an error: %s";
-                throw new TedaException(error, beanToLoad.getBeanName(), rowCount, e.getMessage());
+            } catch (final SQLException e) {
+                throw TedaException.builder()
+                        .appendMessage("Failed to insert data into %s", beanToLoad.getBeanName())
+                        .appendMessage("Row %d contains an error: %s", rowCount)
+                        .cause(e)
+                        .build();
             }
             rowCount++;
         }

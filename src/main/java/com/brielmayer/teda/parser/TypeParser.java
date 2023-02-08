@@ -115,7 +115,9 @@ public class TypeParser {
 
         // from this point only try to parse strings
         if (!(value instanceof String)) {
-            throw new TedaException("Type %s not supported", value.getClass().getSimpleName());
+            throw TedaException.builder()
+                    .appendMessage("Type %s not supported", value.getClass().getSimpleName())
+                    .build();
         }
 
         // java.lang.Boolean
@@ -139,7 +141,6 @@ public class TypeParser {
             return LocalDate.parse((String) value);
         } catch (DateTimeException e) {
         }
-        ;
 
         // java.time.LocalTime
         // Time without offset: '10:15:30'
@@ -147,7 +148,6 @@ public class TypeParser {
             return LocalTime.parse((String) value);
         } catch (DateTimeException e) {
         }
-        ;
 
         // java.time.LocalDateTime
         //  ISO Local Date and Time: '2011-12-03T10:15:30'
@@ -155,7 +155,6 @@ public class TypeParser {
             return LocalDateTime.parse((String) value);
         } catch (DateTimeException e) {
         }
-        ;
 
         return value;
 

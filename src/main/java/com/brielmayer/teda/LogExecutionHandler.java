@@ -6,10 +6,10 @@ import org.slf4j.LoggerFactory;
 
 public class LogExecutionHandler implements ExecutionHandler {
 
-    private final Logger log  = LoggerFactory.getLogger(LogExecutionHandler.class);
+    private static final Logger log  = LoggerFactory.getLogger(LogExecutionHandler.class);
 
     @Override
-    public void execute(String value) {
+    public void execute(final String value) {
         log.info("Execute: {}", value);
     }
 }

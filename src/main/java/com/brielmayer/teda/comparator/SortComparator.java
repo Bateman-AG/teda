@@ -3,32 +3,36 @@ package com.brielmayer.teda.comparator;
 import com.brielmayer.teda.exception.TedaException;
 import com.brielmayer.teda.model.Header;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-public class SortComparator implements Comparator<Map<String, Object>> {
+public class SortComparator implements Comparator<Map<String, Object>>, Serializable {
 
-    private List<Header> primaryKeys;
+    private static final long serialVersionUID = 6561977888664706224L;
 
-    public SortComparator(List<Header> primaryKeys) {
+    private final List<Header> primaryKeys;
+
+    public SortComparator(final List<Header> primaryKeys) {
         this.primaryKeys = primaryKeys;
     }
 
     @Override
-    public int compare(Map<String, Object> o1, Map<String, Object> o2) {
-        for (Header key : primaryKeys) {
+    @SuppressWarnings("ComparatorMethodParameterNotUsed")
+    public int compare(final Map<String, Object> o1, final Map<String, Object> o2) {
+        for (final Header key : primaryKeys) {
 
             // check if both objects have the same data type
             if (!o1.getClass().getSimpleName().equals(o2.getClass().getSimpleName())) {
-                String error =
-                        "\nUnable to sort data" +
-                        "\nData types are not equal within primary key \"%s\"" +
-                        "\nCan not sort by comparing \"%s\" with \"%s\"";
-                throw new TedaException(error, key.getName(), o1.getClass().getSimpleName(), o2.getClass().getSimpleName());
+                throw TedaException.builder()
+                        .appendMessage("Unable to sort data")
+                        .appendMessage("Data types are not equal within primary key \"%s\"", key.getName())
+                        .appendMessage("Can not sort by comparing \"%s\" with \"%s\"", o1.getClass().getSimpleName(), o2.getClass().getSimpleName())
+                        .build();
             }
 
-            int result = o1.toString().compareTo(o2.toString());
+            final int result = o1.toString().compareTo(o2.toString());
             if (result == 0) {
                 // sort result not unique
                 // so continue sorting by next primary key
@@ -37,10 +41,11 @@ public class SortComparator implements Comparator<Map<String, Object>> {
                 return result;
             }
         }
-        String error =
-                "\nUnable to sort data" +
-                "\nPrimary keys are not unique when using" +
-                "\nORDER BY %s";
-        throw new TedaException(error, primaryKeys.toString());
+
+        throw TedaException.builder()
+                .appendMessage("Unable to sort data")
+                .appendMessage("Primary keys are not unique when using")
+                .appendMessage("ORDER BY %s", primaryKeys.toString())
+                .build();
     }
 }

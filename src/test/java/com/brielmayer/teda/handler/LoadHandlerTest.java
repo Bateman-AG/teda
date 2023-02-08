@@ -21,15 +21,15 @@ import static org.mockito.Mockito.verify;
 public class LoadHandlerTest {
 
     @Test
-    public void loadHandler_validData_success() throws SQLException {
+    public void loadHandler_validData_success() throws SQLException, IOException {
         //Mocks
-        BaseDatabase database = Mockito.mock(BaseDatabase.class);
+        final BaseDatabase database = Mockito.mock(BaseDatabase.class);
         doNothing().when(database).insertRow(any(), any());
 
         // Testdata
-        InputStream resourceAsStream = LoadHandlerTest.class.getClassLoader()
+        final InputStream resourceAsStream = LoadHandlerTest.class.getClassLoader()
                 .getResourceAsStream("teda/LOAD_TEST.xlsx");
-        XSSFSheet sheet = getWorkbook(resourceAsStream).getSheet("STUDENT_IN");
+        final XSSFSheet sheet = getWorkbook(resourceAsStream).getSheet("STUDENT_IN");
 
         LoadHandler.load(database, sheet);
 
@@ -37,30 +37,22 @@ public class LoadHandlerTest {
     }
 
     @Test
-    public void loadHandler_sqlException_throwsTeDaException() throws SQLException {
+    public void loadHandler_sqlException_throwsTeDaException() throws SQLException, IOException {
         //Mocks
-        BaseDatabase database = Mockito.mock(BaseDatabase.class);
+        final BaseDatabase database = Mockito.mock(BaseDatabase.class);
         doThrow(SQLException.class)
                 .when(database)
                 .insertRow(any(), any());
 
         // Testdata
-        InputStream resourceAsStream = LoadHandlerTest.class.getClassLoader()
+        final InputStream resourceAsStream = LoadHandlerTest.class.getClassLoader()
                 .getResourceAsStream("teda/LOAD_TEST.xlsx");
-        XSSFSheet sheet = getWorkbook(resourceAsStream).getSheet("STUDENT_IN");
+        final XSSFSheet sheet = getWorkbook(resourceAsStream).getSheet("STUDENT_IN");
 
         assertThrows(TedaException.class, () -> LoadHandler.load(database, sheet));
     }
 
-    private XSSFWorkbook getWorkbook(InputStream tedaSheetInputStream) {
-        try {
-            return new XSSFWorkbook(tedaSheetInputStream);
-        } catch (IOException e) {
-            String error =
-                    "\nUnable to open Teda sheet" +
-                            "\n%s";
-            throw new TedaException(error, e.getMessage());
-        }
+    private XSSFWorkbook getWorkbook(final InputStream tedaSheetInputStream) throws IOException {
+        return new XSSFWorkbook(tedaSheetInputStream);
     }
-
 }

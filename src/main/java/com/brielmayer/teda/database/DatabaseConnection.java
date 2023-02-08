@@ -20,7 +20,7 @@ public class DatabaseConnection {
     private int port;
     private String databaseName;
 
-    public DatabaseConnection(String url, String user, String password) {
+    public DatabaseConnection(final String url, final String user, final String password) {
         this.url = url;
         this.user = user;
         this.password = password;
@@ -28,30 +28,32 @@ public class DatabaseConnection {
     }
 
     private void parseUrl() {
-        String cleanURI = url.substring(5);
+        final String cleanURI = url.substring(5);
 
-        URI uri = URI.create(cleanURI);
+        final URI uri = URI.create(cleanURI);
         this.scheme = uri.getScheme();
         this.host = uri.getHost();
         this.port = uri.getPort();
         this.databaseName = uri.getPath();
 
         if (this.host == null) {
-            for (String pattern : PATTERNS) {
+            for (final String pattern : PATTERNS) {
                 if (parseUrlByPattern(pattern)) {
                     break;
                 }
             }
         }
         if (this.host == null) {
-            throw new TedaException("failed to parse jdbc url: %s", url);
+            throw TedaException.builder()
+                    .appendMessage("Failed to parse JDBC url %s", url)
+                    .build();
         }
     }
 
-    private boolean parseUrlByPattern(String pattern) {
-        Pattern p = Pattern.compile(pattern);
+    private boolean parseUrlByPattern(final String pattern) {
+        final Pattern p = Pattern.compile(pattern);
 
-        Matcher matcher = p.matcher(url);
+        final Matcher matcher = p.matcher(url);
         if (matcher.find()) {
             host = matcher.group(1);
             port = Integer.parseInt(matcher.group(2));

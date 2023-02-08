@@ -9,7 +9,7 @@ public class Bean {
     private final List<Header> header;
     private final List<Map<String, Object>> data;
 
-    public Bean(String beanName, List<Header> header, List<Map<String, Object>> data) {
+    public Bean(final String beanName, final List<Header> header, final List<Map<String, Object>> data) {
         this.beanName = beanName;
         this.header = header;
         this.data = data;

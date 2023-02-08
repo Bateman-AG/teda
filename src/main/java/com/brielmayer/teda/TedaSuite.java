@@ -14,7 +14,11 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.sql.DataSource;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 public class TedaSuite {
@@ -24,51 +28,54 @@ public class TedaSuite {
 
     private final ExecutionHandler executionHandler;
 
-    public TedaSuite(DataSource dataSource, ExecutionHandler executionHandler) {
-        this.inputDatabase = DatabaseFactory.createDatabase(dataSource);
-        this.outputDatabase = DatabaseFactory.createDatabase(dataSource);
-        this.executionHandler = executionHandler;
+    public TedaSuite(final DataSource dataSource) {
+        this(dataSource, dataSource, new LogExecutionHandler());
     }
 
-    public TedaSuite(DataSource inputDataSource, DataSource outputDataSource, ExecutionHandler executionHandler) {
+    public TedaSuite(final DataSource dataSource, final ExecutionHandler executionHandler) {
+        this(dataSource, dataSource, executionHandler);
+    }
+
+    public TedaSuite(final DataSource inputDataSource, final DataSource outputDataSource, final ExecutionHandler executionHandler) {
         this.inputDatabase = DatabaseFactory.createDatabase(inputDataSource);
         this.outputDatabase = DatabaseFactory.createDatabase(outputDataSource);
         this.executionHandler = executionHandler;
     }
 
-    public void executeSheet(String filePath) {
-        executeSheet(new File(filePath));
+    public void executeSheet(final String filePath) {
+        executeSheet(Paths.get(filePath));
     }
 
-    public void executeSheet(File file) {
-        FileInputStream fileInputStream;
+    public void executeSheet(final Path filePath) {
         try {
-            fileInputStream = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            throw new TedaException("File not found: %s", file.getAbsolutePath());
+            executeSheet(Files.newInputStream(filePath));
+        } catch (IOException e) {
+            throw TedaException.builder()
+                    .appendMessage("Unable to read file %s", filePath)
+                    .cause(e)
+                    .build();
         }
-        executeSheet(fileInputStream);
     }
 
-    public void executeSheet(InputStream inputStream) {
-        XSSFWorkbook workbook;
+    public void executeSheet(final InputStream inputStream) {
+        final XSSFWorkbook workbook;
 
         try {
             workbook = new XSSFWorkbook(inputStream);
-        } catch (IOException e) {
-            String error =
-                    "\nUnable to open Teda sheet" +
-                            "\n%s";
-            throw new TedaException(error, e.getMessage());
+        } catch (final IOException e) {
+            throw TedaException.builder()
+                    .appendMessage("Unable to read InputStream")
+                    .cause(e)
+                    .build();
         }
 
-        Bean bean = BeanParser.parse(workbook.getSheet("Cockpit"), "#Teda");
-        for (Map<String, Object> row : bean.getData()) {
-            for (Map.Entry<String, Object> entry : row.entrySet()) {
+        final Bean bean = BeanParser.parse(workbook.getSheet("Cockpit"), "#Teda");
+        for (final Map<String, Object> row : bean.getData()) {
+            for (final Map.Entry<String, Object> entry : row.entrySet()) {
 
                 // cockpit must only contain strings
-                String header = entry.getKey();
-                String value = (String) entry.getValue();
+                final String header = entry.getKey();
+                final String value = (String) entry.getValue();
 
                 // if cell is empty, no action will be performed
                 if (value == null || value.isEmpty()) {
@@ -80,14 +87,14 @@ public class TedaSuite {
                         TruncateHandler.truncate(outputDatabase, value);
                         break;
                     case LOAD:
-                        XSSFSheet loadSheet = workbook.getSheet(value);
+                        final XSSFSheet loadSheet = workbook.getSheet(value);
                         LoadHandler.load(inputDatabase, loadSheet);
                         break;
                     case EXECUTE:
                         executionHandler.execute(value);
                         break;
                     case TEST:
-                        XSSFSheet testSheet = workbook.getSheet(value);
+                        final XSSFSheet testSheet = workbook.getSheet(value);
                         TestHandler.test(outputDatabase, testSheet);
                         break;
                 }
