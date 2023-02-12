@@ -23,8 +23,8 @@ public class TedaException extends RuntimeException {
 
         public TedaExceptionBuilder appendMessage(final String message, final Object... params) {
             this.message
-                    .append(String.format(message, params))
-                    .append(System.lineSeparator());
+                    .append(System.lineSeparator())
+                    .append(String.format(message, params));
             return this;
         }
 

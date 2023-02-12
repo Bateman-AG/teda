@@ -3,6 +3,7 @@ package com.brielmayer.teda.parser;
 import com.brielmayer.teda.exception.TedaException;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -66,34 +67,39 @@ public class TypeParser {
             return time.toLocalTime();
         }
 
+        // java.math.BigInteger
+        if (value instanceof BigInteger) {
+            return value;
+        }
+
         // java.lang.Byte
         if (value instanceof Byte) {
-            return Long.valueOf((Byte) value);
+            return BigInteger.valueOf((Byte) value);
         }
 
         // java.lang.Short
         if (value instanceof Short) {
-            return Long.valueOf((Short) value);
+            return BigInteger.valueOf((Short) value);
         }
 
         // java.lang.Integer
         if (value instanceof Integer) {
-            return Long.valueOf((Integer) value);
+            return BigInteger.valueOf((Integer) value);
         }
 
         // java.lang.Long
         if (value instanceof Long) {
-            return (Long) value;
+            return BigInteger.valueOf((Long) value);
         }
 
         // java.lang.Float
         if (value instanceof Float) {
-            return Double.valueOf(String.valueOf((Float) value));
+            return BigDecimal.valueOf((Float) value);
         }
 
         // java.lang.Double
         if (value instanceof Double) {
-            return (Double) value;
+            return BigDecimal.valueOf((Double) value);
         }
 
         // java.util.UUID
@@ -104,13 +110,7 @@ public class TypeParser {
 
         // java.math.BigDecimal
         if (value instanceof BigDecimal) {
-            BigDecimal bigDecimal = (BigDecimal) value;
-            if (bigDecimal.scale() <= 0) {
-                return bigDecimal.longValue();
-            } else {
-                return bigDecimal.doubleValue();
-            }
-
+            return value;
         }
 
         // from this point only try to parse strings
@@ -127,12 +127,12 @@ public class TypeParser {
 
         // java.lang.Long
         if (LONG_PATTERN.matcher((String) value).matches()) {
-            return Long.valueOf((String) value);
+            return BigInteger.valueOf(Long.parseLong((String) value));
         }
 
         // java.lang.double
         if (DOUBLE_PATTERN.matcher((String) value).matches()) {
-            return Double.valueOf((String) value);
+            return BigDecimal.valueOf(Double.parseDouble((String) value));
         }
 
         // java.time.LocalDateTime

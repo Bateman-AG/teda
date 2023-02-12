@@ -67,8 +67,8 @@ public final class TestHandler {
 
                 if (!ObjectComparator.compare(actualValue, expectedValue)) {
                     throw TedaException.builder()
-                            .appendMessage("Error comparing Bean %s in row %d", excelBean.getName(), rowCount + 1)
-                            .appendMessage("Column %s: Expected (%s)\"%s\" != Actual (%s)\"%s\"", key, expectedValue.getClass().getSimpleName(), expectedValue, actualValue.getClass().getSimpleName(), actualValue)
+                            .appendMessage("Error comparing Table %s in row %d", excelBean.getName(), rowCount + 1)
+                            .appendMessage("Column %s: Expected (%s) \"%s\" != Actual (%s) \"%s\"", key, expectedValue.getClass().getSimpleName(), expectedValue, actualValue.getClass().getSimpleName(), actualValue)
                             .appendMessage("Expected Row:  %s", expectedRow.toString())
                             .appendMessage("Actual Row:    %s", actualRow.toString())
                             .build();

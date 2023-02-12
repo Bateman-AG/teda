@@ -2,6 +2,8 @@ package com.brielmayer.teda.comparator;
 
 import com.brielmayer.teda.exception.TedaException;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -39,19 +41,14 @@ public final class ObjectComparator {
             return o1.equals(o2);
         }
 
-        // java.lang.Long
-        if (o1 instanceof Long) {
-            return ((long) o1) == ((long) o2);
+        // java.math.BigInteger
+        if (o1 instanceof BigInteger) {
+            return o1.equals(o2);
         }
 
-        // java.lang.Float
-        if (o1 instanceof Float) {
-            return ((float) o1) == ((float) o2);
-        }
-
-        // java.lang.Double
-        if (o1 instanceof Double) {
-            return ((double) o1) == ((double) o2);
+        // java.math.BigDecimal
+        if (o1 instanceof BigDecimal) {
+            return ((BigDecimal) o1).compareTo((BigDecimal) o2) == 0;
         }
 
         throw TedaException.builder()
