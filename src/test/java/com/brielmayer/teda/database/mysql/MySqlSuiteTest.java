@@ -1,9 +1,10 @@
 package com.brielmayer.teda.database.mysql;
 
 import com.brielmayer.teda.LogExecutionHandler;
-import com.brielmayer.teda.TedaSuite;
+import com.brielmayer.teda.Teda;
 import com.brielmayer.teda.database.BaseDatabase;
 import com.brielmayer.teda.database.DatabaseFactory;
+import com.brielmayer.teda.model.DocumentType;
 import com.brielmayer.teda.util.ResourceReader;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import org.junit.jupiter.api.Test;
@@ -37,14 +38,14 @@ public class MySqlSuiteTest {
     @Test
     void loadTestMySql5() {
         initializeDatabase(mySqlContainer5_7_40);
-        new TedaSuite(database.getDataSource(), new LogExecutionHandler())
-                .executeSheet(ResourceReader.getResourceAsInputStream("teda/LOAD_TEST.xlsx"));
+        new Teda(database.getDataSource(), new LogExecutionHandler())
+                .execute(ResourceReader.getResourceAsInputStream("teda/LOAD_TEST.xlsx"), DocumentType.EXCEL);
     }
 
     @Test
     void loadTestMySql8() {
         initializeDatabase(mySqlContainer8_0_31);
-        new TedaSuite(database.getDataSource(), new LogExecutionHandler())
-                .executeSheet(ResourceReader.getResourceAsInputStream("teda/LOAD_TEST.xlsx"));
+        new Teda(database.getDataSource(), new LogExecutionHandler())
+                .execute(ResourceReader.getResourceAsInputStream("teda/LOAD_TEST.xlsx"), DocumentType.EXCEL);
     }
 }

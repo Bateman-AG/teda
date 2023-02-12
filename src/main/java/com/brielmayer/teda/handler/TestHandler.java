@@ -4,11 +4,9 @@ import com.brielmayer.teda.comparator.ObjectComparator;
 import com.brielmayer.teda.comparator.SortComparator;
 import com.brielmayer.teda.database.BaseDatabase;
 import com.brielmayer.teda.exception.TedaException;
-import com.brielmayer.teda.model.Bean;
 import com.brielmayer.teda.model.Header;
-import com.brielmayer.teda.parser.BeanParser;
+import com.brielmayer.teda.model.Table;
 import com.brielmayer.teda.parser.TypeParser;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,34 +18,30 @@ public final class TestHandler {
 
     private static final Logger log  = LoggerFactory.getLogger(TestHandler.class);
 
-    private static final String TABLE_BEAN = "#Table";
+    public static void test(final BaseDatabase database, final Table expectedTable) {
 
-    public static void test(final BaseDatabase database, final XSSFSheet sheet) {
+        final Table actualTable = Table.builder()
+                .name(expectedTable.getName())
+                .headers(expectedTable.getHeaders())
+                .data(database.select(expectedTable.getName(), expectedTable.getHeaders()))
+                .build();
 
-        final Bean expectedBean = BeanParser.parse(sheet, TABLE_BEAN);
-        final Bean actualBean = new Bean(
-                expectedBean.getBeanName(),
-                expectedBean.getHeader(),
-                database.select(expectedBean.getBeanName(), expectedBean.getHeader())
-        );
-
-        log.info("Test table: {}", expectedBean.getBeanName());
+        log.info("Test table: {}", expectedTable.getName());
 
         // sort data
-        final List<Header> primaryKeys = expectedBean.getHeader().stream().filter(Header::isPrimaryKey).collect(Collectors.toList());
-        expectedBean.getData().sort(new SortComparator(primaryKeys));
-        actualBean.getData().sort(new SortComparator(primaryKeys));
+        final List<Header> primaryKeys = expectedTable.getHeaders().stream().filter(Header::isPrimaryKey).collect(Collectors.toList());
+        expectedTable.getData().sort(new SortComparator(primaryKeys));
+        actualTable.getData().sort(new SortComparator(primaryKeys));
 
         // compare data
-        compare(expectedBean, actualBean);
+        compare(expectedTable, actualTable);
     }
 
-    private static void compare(final Bean excelBean, final Bean actualBean) {
-
+    private static void compare(final Table excelBean, final Table actualBean) {
         // check number of rows
         if (excelBean.getData().size() != actualBean.getData().size()) {
             throw TedaException.builder()
-                    .appendMessage("Failed to compare data for bean %s", excelBean.getBeanName())
+                    .appendMessage("Failed to compare data for bean %s", excelBean.getName())
                     .appendMessage("Number of rows are not equal")
                     .appendMessage("Expected number of rows: %d", excelBean.getData().size())
                     .appendMessage("Actual number of rows: %d", actualBean.getData().size())
@@ -73,7 +67,7 @@ public final class TestHandler {
 
                 if (!ObjectComparator.compare(actualValue, expectedValue)) {
                     throw TedaException.builder()
-                            .appendMessage("Error comparing Bean %s in row %d", excelBean.getBeanName(), rowCount + 1)
+                            .appendMessage("Error comparing Bean %s in row %d", excelBean.getName(), rowCount + 1)
                             .appendMessage("Column %s: Expected (%s)\"%s\" != Actual (%s)\"%s\"", key, expectedValue.getClass().getSimpleName(), expectedValue, actualValue.getClass().getSimpleName(), actualValue)
                             .appendMessage("Expected Row:  %s", expectedRow.toString())
                             .appendMessage("Actual Row:    %s", actualRow.toString())

@@ -1,19 +1,22 @@
 package com.brielmayer.teda.util;
 
+import lombok.experimental.UtilityClass;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.stream.Collectors;
 
+@UtilityClass
 public class ResourceReader {
 
-    public static InputStream getResourceAsInputStream(String fileName) {
+    public InputStream getResourceAsInputStream(String fileName) {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         return classLoader.getResourceAsStream(fileName);
     }
 
-    public static String getResourceAsString(String fileName) {
+    public String getResourceAsString(String fileName) {
         try (InputStream is = getResourceAsInputStream(fileName)) {
             if (is == null) {
                 throw new IllegalArgumentException("File not found: " + fileName);

@@ -1,9 +1,10 @@
 package com.brielmayer.teda.database.postgres;
 
 import com.brielmayer.teda.LogExecutionHandler;
-import com.brielmayer.teda.TedaSuite;
+import com.brielmayer.teda.Teda;
 import com.brielmayer.teda.database.BaseDatabase;
 import com.brielmayer.teda.database.DatabaseFactory;
+import com.brielmayer.teda.model.DocumentType;
 import com.brielmayer.teda.util.ResourceReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,7 @@ public class PostgresSuiteTest {
 
     @Test
     void loadTest() {
-        new TedaSuite(database.getDataSource(), new LogExecutionHandler())
-                .executeSheet(ResourceReader.getResourceAsInputStream("teda/LOAD_TEST.xlsx"));
+        new Teda(database.getDataSource(), new LogExecutionHandler())
+                .execute(ResourceReader.getResourceAsInputStream("teda/LOAD_TEST.xlsx"), DocumentType.EXCEL);
     }
 }

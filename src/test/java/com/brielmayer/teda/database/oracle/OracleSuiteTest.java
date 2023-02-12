@@ -1,9 +1,10 @@
 package com.brielmayer.teda.database.oracle;
 
 import com.brielmayer.teda.LogExecutionHandler;
-import com.brielmayer.teda.TedaSuite;
+import com.brielmayer.teda.Teda;
 import com.brielmayer.teda.database.BaseDatabase;
 import com.brielmayer.teda.database.DatabaseFactory;
+import com.brielmayer.teda.model.DocumentType;
 import com.brielmayer.teda.util.ResourceReader;
 import oracle.jdbc.datasource.impl.OracleDataSource;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +41,7 @@ public class OracleSuiteTest {
 
     @Test
     void loadTest() {
-        new TedaSuite(database.getDataSource(), new LogExecutionHandler())
-                .executeSheet(ResourceReader.getResourceAsInputStream("teda/LOAD_TEST.xlsx"));
+        new Teda(database.getDataSource(), new LogExecutionHandler())
+                .execute(ResourceReader.getResourceAsInputStream("teda/LOAD_TEST.xlsx"), DocumentType.EXCEL);
     }
 }

@@ -2,12 +2,8 @@ package com.brielmayer.teda.exception;
 
 public class TedaException extends RuntimeException {
 
-    private String message;
-    private Exception cause;
-
     public TedaException(final String message, final Exception cause) {
-        this.message = message;
-        this.cause = cause;
+        super(message, cause);
     }
 
     public static TedaExceptionBuilder builder() {

@@ -2,32 +2,25 @@ package com.brielmayer.teda.handler;
 
 import com.brielmayer.teda.database.BaseDatabase;
 import com.brielmayer.teda.exception.TedaException;
-import com.brielmayer.teda.model.Bean;
-import com.brielmayer.teda.parser.BeanParser;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.brielmayer.teda.model.Table;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.SQLException;
 import java.util.Map;
 
+@Slf4j
 public final class LoadHandler {
 
-    private static final Logger log  = LoggerFactory.getLogger(LoadHandler.class);
-
-    private static final String TABLE_BEAN = "#Table";
-
-    public static void load(final BaseDatabase database, final XSSFSheet sheet) {
-        final Bean beanToLoad = BeanParser.parse(sheet, TABLE_BEAN);
-        log.info("Load table: {}", beanToLoad.getBeanName());
+    public static void load(final BaseDatabase database, final Table table) {
+        log.info("Load table: {}", table.getName());
 
         int rowCount = 1;
-        for (final Map<String, Object> row : beanToLoad.getData()) {
+        for (final Map<String, Object> row : table.getData()) {
             try {
-                database.insertRow(beanToLoad.getBeanName(), row);
+                database.insertRow(table.getName(), row);
             } catch (final SQLException e) {
                 throw TedaException.builder()
-                        .appendMessage("Failed to insert data into %s", beanToLoad.getBeanName())
+                        .appendMessage("Failed to insert data into %s", table.getName())
                         .appendMessage("Row %d contains an error", rowCount)
                         .cause(e)
                         .build();

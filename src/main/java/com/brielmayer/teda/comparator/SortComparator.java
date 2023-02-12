@@ -2,21 +2,19 @@ package com.brielmayer.teda.comparator;
 
 import com.brielmayer.teda.exception.TedaException;
 import com.brielmayer.teda.model.Header;
+import lombok.RequiredArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+@RequiredArgsConstructor
 public class SortComparator implements Comparator<Map<String, Object>>, Serializable {
 
     private static final long serialVersionUID = 6561977888664706224L;
 
     private final List<Header> primaryKeys;
-
-    public SortComparator(final List<Header> primaryKeys) {
-        this.primaryKeys = primaryKeys;
-    }
 
     @Override
     @SuppressWarnings("ComparatorMethodParameterNotUsed")

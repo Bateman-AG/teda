@@ -1,60 +1,20 @@
 package com.brielmayer.teda.database;
 
-import com.brielmayer.teda.util.LinkedCaseInsensitiveMap;
 import com.brielmayer.teda.model.Header;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Getter
+@RequiredArgsConstructor
 public abstract class BaseDatabase {
 
-    static final class ResultSetMapper {
-
-        public static Map<String, Object> mapResultSet(final ResultSet resultSet) throws SQLException {
-            final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-            final int columnCount = resultSetMetaData.getColumnCount();
-            final Map<String, Object> mapOfColValues = createColumnMap(columnCount);
-
-            for (int i = 1; i <= columnCount; ++i) {
-                final String key = getColumnKey(resultSetMetaData, i);
-                final Object obj = getColumnValue(resultSet, i);
-                mapOfColValues.put(key, obj);
-            }
-
-            return mapOfColValues;
-        }
-
-        private static Map<String, Object> createColumnMap(final int columnCount) {
-            return new LinkedCaseInsensitiveMap<>(columnCount);
-        }
-
-        private static String getColumnKey(final ResultSetMetaData resultSetMetaData, final int index) throws SQLException {
-            String name = resultSetMetaData.getColumnLabel(index);
-            if (name == null || name.length() < 1) {
-                name = resultSetMetaData.getColumnName(index);
-            }
-
-            return name;
-        }
-
-        private static Object getColumnValue(final ResultSet rs, final int index) throws SQLException {
-            return rs.getObject(index);
-        }
-    }
-
-    protected DataSource dataSource;
-
-    public BaseDatabase(final DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+    private final DataSource dataSource;
 
     public int executeQuery(final String query) {
         try (final Statement statement = dataSource.getConnection().createStatement()) {
@@ -92,10 +52,6 @@ public abstract class BaseDatabase {
                 preparedStatement.executeUpdate();
             }
         }
-    }
-
-    public DataSource getDataSource() {
-        return dataSource;
     }
 
     public abstract void truncateTable(String tableName);

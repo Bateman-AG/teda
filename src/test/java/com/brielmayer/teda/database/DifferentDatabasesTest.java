@@ -1,7 +1,8 @@
 package com.brielmayer.teda.database;
 
 import com.brielmayer.teda.LogExecutionHandler;
-import com.brielmayer.teda.TedaSuite;
+import com.brielmayer.teda.Teda;
+import com.brielmayer.teda.model.DocumentType;
 import com.brielmayer.teda.util.ResourceReader;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import org.junit.jupiter.api.BeforeAll;
@@ -47,7 +48,7 @@ public class DifferentDatabasesTest {
 
     @Test
     void testWithTwoDifferentDatabaseTypes() {
-        new TedaSuite(mysqlDatabase.getDataSource(), postgresDatabase.getDataSource(), new LogExecutionHandler())
-                .executeSheet("src/test/resources/teda/DIFFERENT_DATABASE_TEST.xlsx");
+        new Teda(mysqlDatabase.getDataSource(), postgresDatabase.getDataSource(), new LogExecutionHandler())
+                .execute(ResourceReader.getResourceAsInputStream("teda/DIFFERENT_DATABASE_TEST.xlsx"), DocumentType.EXCEL);
     }
 }
