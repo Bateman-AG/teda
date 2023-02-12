@@ -1,6 +1,6 @@
 package com.brielmayer.teda.database;
 
-import com.brielmayer.teda.LogExecutionHandler;
+import com.brielmayer.teda.handler.impl.LogExecutionHandler;
 import com.brielmayer.teda.Teda;
 import com.brielmayer.teda.model.DocumentType;
 import com.brielmayer.teda.util.ResourceReader;

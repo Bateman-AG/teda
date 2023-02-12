@@ -4,6 +4,7 @@ import com.brielmayer.teda.database.BaseDatabase;
 import com.brielmayer.teda.database.DatabaseFactory;
 import com.brielmayer.teda.exception.TedaException;
 import com.brielmayer.teda.handler.ExecutionHandler;
+import com.brielmayer.teda.handler.impl.LogExecutionHandler;
 import com.brielmayer.teda.model.Document;
 import com.brielmayer.teda.model.DocumentType;
 import com.brielmayer.teda.parser.Parser;

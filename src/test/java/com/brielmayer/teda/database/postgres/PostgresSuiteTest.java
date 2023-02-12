@@ -1,6 +1,6 @@
 package com.brielmayer.teda.database.postgres;
 
-import com.brielmayer.teda.LogExecutionHandler;
+import com.brielmayer.teda.handler.impl.LogExecutionHandler;
 import com.brielmayer.teda.Teda;
 import com.brielmayer.teda.database.BaseDatabase;
 import com.brielmayer.teda.database.DatabaseFactory;

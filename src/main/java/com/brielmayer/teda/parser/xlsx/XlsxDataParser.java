@@ -15,9 +15,10 @@ import java.util.Map;
 
 public class XlsxDataParser {
 
-    public static List<Map<String, Object>> parseData(XSSFSheet xssfSheet, CellAddress cellAddress, List<Header> header) {
+    public static List<Map<String, Object>> parseData(XSSFSheet xssfSheet, CellAddress cellAddress) {
         final List<Map<String, Object>> data = new ArrayList<>();
 
+        final List<Header> headers = XlsxHeaderParser.parseHeader(xssfSheet, cellAddress);
         for (int r = 2; ; r++) {
             final XSSFRow xssfRow = xssfSheet.getRow(cellAddress.getRow() + r);
             if (xssfRow == null) {
@@ -26,12 +27,12 @@ public class XlsxDataParser {
             }
 
             final Map<String, Object> row = new LinkedHashMap<>();
-            for (byte c = 0; c < header.size(); c++) {
+            for (byte c = 0; c < headers.size(); c++) {
                 final XSSFCell cell = xssfRow.getCell(cellAddress.getColumn() + c + 1);
                 if (cell == null) {
-                    row.put(header.get(c).getName(), "");
+                    row.put(headers.get(c).getName(), "");
                 } else {
-                    row.put(header.get(c).getName(), getCellValue(cell));
+                    row.put(headers.get(c).getName(), getCellValue(cell));
                 }
             }
 

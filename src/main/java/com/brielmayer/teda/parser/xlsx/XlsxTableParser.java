@@ -28,7 +28,7 @@ public class XlsxTableParser {
     private static Table parseTable(XSSFSheet xssfSheet, CellAddress cellAddress) {
         final String tableName = parseTableName(xssfSheet, cellAddress);
         final List<Header> headers = XlsxHeaderParser.parseHeader(xssfSheet, cellAddress);
-        final List<Map<String, Object>> data = XlsxDataParser.parseData(xssfSheet, cellAddress, headers);
+        final List<Map<String, Object>> data = XlsxDataParser.parseData(xssfSheet, cellAddress);
 
         return Table.builder()
                 .name(tableName)
