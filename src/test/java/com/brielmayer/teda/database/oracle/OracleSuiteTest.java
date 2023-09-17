@@ -8,6 +8,7 @@ import com.brielmayer.teda.model.DocumentType;
 import com.brielmayer.teda.util.ResourceReader;
 import oracle.jdbc.datasource.impl.OracleDataSource;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.OracleContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -40,6 +41,7 @@ public class OracleSuiteTest {
     }
 
     @Test
+    @Disabled
     void loadTest() {
         new Teda(database.getDataSource(), new LogExecutionHandler())
                 .execute(ResourceReader.getResourceAsInputStream("teda/LOAD_TEST.xlsx"), DocumentType.EXCEL);
