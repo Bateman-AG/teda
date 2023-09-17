@@ -27,14 +27,15 @@ public class TypeParser {
     // ----------------------------------------------------
     // java.lang.Boolean    -> java.lang.Boolean
     // ----------------------------------------------------
-    // java.lang.Byte       -> java.lang.Long
-    // java.lang.Short      -> java.lang.Long
-    // java.lang.Integer    -> java.lang.Long
-    // java.lang.Long       -> java.lang.Long
+    // java.lang.Byte       -> java.math.BigInteger
+    // java.lang.Short      -> java.math.BigInteger
+    // java.lang.Integer    -> java.math.BigInteger
+    // java.lang.Long       -> java.math.BigInteger
+    // java.math.BigInteger -> java.math.BigInteger
     // ----------------------------------------------------
-    // java.lang.Float      -> java.lang.Double
-    // java.lang.Double     -> java.lang.Double
-    // java.math.BigDecimal -> java.lang.Long / java.lang.Double
+    // java.lang.Float      -> java.math.BigDecimal
+    // java.lang.Double     -> java.math.BigDecimal
+    // java.math.BigDecimal -> java.math.BigDecimal
     // ----------------------------------------------------
     // java.util.UUID       -> java.lang.String
     // ----------------------------------------------------
